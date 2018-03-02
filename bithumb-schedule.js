@@ -14,14 +14,17 @@ exports.handler = (event, context, callback) => {
             coin: coin
         };
 
-        lambda.invoke({
-            FunctionName: 'bithumb-collector',
-            Payload: JSON.stringify(attr)
-        }, function(err, data) {
-            if (err) console.log("err: ", base, coin, err, data);
-        });
-        //FOR TEST
-        // var index = require("./bithumb-index.js");
-        // index.handler(attr, context);
+        if (process.env.MODE != 'local') {
+            lambda.invoke({
+                FunctionName: 'bithumb-collector',
+                Payload: JSON.stringify(attr)
+            }, function(err, data) {
+                if (err) console.log("err: ", base, coin, err, data);
+            });
+        } else {
+            //FOR TEST
+            var index = require("./bithumb-collector.js");
+            index.handler(attr, context);
+        }
     }
 }

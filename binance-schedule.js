@@ -19,16 +19,18 @@ exports.handler = (event, context, callback) => {
                     symbol: market.symbol
                 };
 
-                lambda.invoke({
-                    FunctionName: 'binance-collector',
-                    Payload: JSON.stringify(attr)
-                }, function(err, data) {
-                    if (err) console.log("err: ", attr.base, attr.coin, err, data);
-                });
-
-                //FOR TEST
-                // var index = require("./binance-index.js");
-                // index.handler(attr, context);
+                if (process.env.MODE != 'local') {
+                    lambda.invoke({
+                        FunctionName: 'binance-collector',
+                        Payload: JSON.stringify(attr)
+                    }, function(err, data) {
+                        if (err) console.log("err: ", attr.base, attr.coin, err, data);
+                    });
+                } else {
+                    //FOR TEST
+                    var index = require("./binance-collector.js");
+                    index.handler(attr, context);
+                }
 
             }
         } else {

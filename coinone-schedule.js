@@ -24,14 +24,17 @@ exports.handler = (event, context, callback) => {
             coin: coin
         };
 
-        lambda.invoke({
-            FunctionName: 'coinone-collector',
-            Payload: JSON.stringify(attr) // pass params
-        }, function(err, data){
-            if(err) console.log("err: ", base, coin, err, data);
-        });
-        //FOR TEST
-        // var index = require("./coinone-index.js");
-        // index.handler(attr, context);
+        if (process.env.MODE != 'local') {
+            lambda.invoke({
+                FunctionName: 'coinone-collector',
+                Payload: JSON.stringify(attr) // pass params
+            }, function(err, data){
+                if(err) console.log("err: ", base, coin, err, data);
+            });
+        } else {
+            //FOR TEST
+            var index = require("./coinone-collector.js");
+            index.handler(attr, context);
+        }
     }
 }
