@@ -4,7 +4,7 @@ exports.getLatestOhlcv = function(data) {
     endTime.setMilliseconds(0);
     endTime.setMinutes(endTime.getMinutes());
     var startTime = new Date(endTime.getTime());
-    startTime.setMinutes(startTime.getMinutes() - 9);
+    startTime.setMinutes(startTime.getMinutes() - 1);
     var startTimestamp = startTime.getTime();
     var endTimestamp = endTime.getTime();
 
