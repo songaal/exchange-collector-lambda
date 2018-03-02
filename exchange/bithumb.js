@@ -22,20 +22,27 @@ exports.getLatestOhlcv = function(data) {
         ts = ts.getTime();
 
         if (ts >= startTimestamp && ts < endTimestamp) {
-            if(open == undefined) open = o.price;
-            if(high == undefined || o.price > high) high = o.price;
-            if(low == undefined || o.price < low) low = o.price;
+            if (open == undefined) open = o.price;
+            if (high == undefined || o.price > high) high = o.price;
+            if (low == undefined || o.price < low) low = o.price;
             close = o.price;
             volume += parseFloat(o.units_traded);
             trades++;
         }
     }
-    if(trades > 0) {
+    if (trades > 0) {
         return {
-           "ts": startTimestamp,
-           "ohlcv": { "o": open, "h": high, "l": low, "c": close, "v": volume, "t": trades }
+            "ts": startTimestamp,
+            "ohlcv": {
+                "o": open,
+                "h": high,
+                "l": low,
+                "c": close,
+                "v": volume,
+                "t": trades
+            }
         };
-    }else {
+    } else {
         return false;
     }
 }

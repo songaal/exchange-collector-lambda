@@ -1,7 +1,7 @@
 var AWS = require('aws-sdk');
 
-let base = "krw";
-let coins = [
+const base = "krw";
+const coins = [
     "btc",
     "bch",
     "eth",
@@ -19,12 +19,11 @@ var lambda = new AWS.Lambda({
 
 exports.handler = (event, context, callback) => {
     for (let coin of coins) {
-        console.log(coin);
         let attr = {
             base: base,
             coin: coin
         };
-//
+
         lambda.invoke({
             FunctionName: 'coinone-collector',
             Payload: JSON.stringify(attr) // pass params
@@ -32,7 +31,7 @@ exports.handler = (event, context, callback) => {
             if(err) console.log("err: ", base, coin, err, data);
         });
         //FOR TEST
-//         var index = require("./coinone-index.js");
-//         index.handler(attr, context);
+        // var index = require("./coinone-index.js");
+        // index.handler(attr, context);
     }
 }

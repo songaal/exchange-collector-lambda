@@ -26,21 +26,28 @@ exports.getLatestOhlcv = function(data) {
             //console.log(k, "compare>> ", startTimestamp, ts, endTimestamp);
             if (ts >= startTimestamp && ts < endTimestamp) {
                 //console.log(startTime, o);
-                if(open == undefined) open = o.price;
-                if(high == undefined || o.price > high) high = o.price;
-                if(low == undefined || o.price < low) low = o.price;
+                if (open == undefined) open = o.price;
+                if (high == undefined || o.price > high) high = o.price;
+                if (low == undefined || o.price < low) low = o.price;
                 close = o.price;
                 volume += parseFloat(o.qty);
                 trades++;
             }
         }
     }
-    if(trades > 0) {
+    if (trades > 0) {
         return {
-           "ts": startTimestamp,
-           "ohlcv": { "o": open, "h": high, "l": low, "c": close, "v": volume, "t": trades }
+            "ts": startTimestamp,
+            "ohlcv": {
+                "o": open,
+                "h": high,
+                "l": low,
+                "c": close,
+                "v": volume,
+                "t": trades
+            }
         };
-    }else {
+    } else {
         return false;
     }
 }

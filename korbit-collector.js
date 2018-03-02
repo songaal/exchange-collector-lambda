@@ -9,21 +9,24 @@ exports.handler = (event, context, callback) => {
     var coin = event.coin;
     var base = event.base;
     var options = {
-          url: API_URL,
-          qs: { 'currency_pair': (coin+ '_' +base) },
-          headers: { 'cache-control': 'no-cache' }
+        url: API_URL,
+        qs: {
+            'currency_pair': (coin + '_' + base)
+        },
+        headers: {
+            'cache-control': 'no-cache'
+        }
     };
     request(options, function(error, response, body) {
         if (error) throw error;
-        var data = body;
-        var orders = JSON.parse(data);
-        var ohlcv = korbit.getLatestOhlcv(orders);
+        var orders = JSON.parse(body);
+        var data = korbit.getLatestOhlcv(orders);
 
         if (process.env.NODE_ENV == 'dev') {
-            console.log(market, coin, base, ohlcv);
+            console.log(market, coin, base, data);
         }
-        if(ohlcv) {
-            queue.put(ohlcv.ohlcv, ohlcv.ts, market, coin, base);
+        if (data) {
+            queue.put(data.ohlcv, data.ts, market, coin, base);
         }
     });
 }

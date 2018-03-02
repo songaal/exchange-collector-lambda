@@ -1,36 +1,36 @@
 var AWS = require('aws-sdk');
-
-//let baseList = [
-//"LTC","DOGE","VTC","PPC","FTC","RDD","NXT","DASH","POT","BLK","EMC2","XMY","AUR","EFL","GLD","SLR","PTC","GRS","NLG","RBY","XWC","MONA","THC","ENRG","ERC","VRC","CURE","XMR","CLOAK","START","KORE","XDN","TRUST","NAV","XST","VIA","PINK","IOC","CANN","SYS","NEOS","DGB","BURST","EXCL","SWIFT","DOPE","BLOCK","ABY","BYC","XMG","BLITZ","BAY","FAIR","SPR","VTR","XRP","GAME","COVAL","NXS","XCP","BITB","GEO","FLDC","GRC","FLO","NBT","MUE","XEM","CLAM","DMD","GAM","SPHR","OK","SNRG","PKB","CPC","AEON","ETH","GCR","TX","BCY","EXP","INFX","OMNI","AMP","AGRS","XLM","BTC","CLUB","VOX","EMC","FCT","MAID","EGC","SLS","RADS","DCR","BSD","XVG","PIVX","XVC","MEME","STEEM","2GIVE","LSK","PDC","BRK","WAVES","LBC","SBD","BRX","ETC","ETC","STRAT","UNB","SYNX","EBST","VRM","SEQ","REP","SHIFT","ARDR","XZC","NEO","ZEC","ZCL","IOP","GOLOS","UBQ","KMD","GBG","SIB","ION","LMC","QWARK","CRW","SWT","MLN","ARK","DYN","TKS","MUSIC","DTB","INCNT","GBYTE","GNT","NXC","EDG","LGD","TRST","GNT","REP","ETH","WINGS","WINGS","RLC","GNO","GUP","LUN","GUP","RLC","LUN","GNO","HMQ","HMQ","ANT","TRST","ANT","SC","BAT","BAT","ZEN","1ST","QRL","1ST","QRL","CRB","CRB","LGD","PTOY","PTOY","CFI","CFI","BNT","BNT","NMR","NMR","LTC","XRP","SNT","SNT","DCT","XEL","MCO","MCO","ADT","ADT","PAY","PAY","STORJ","STORJ","ADX","ADX","DASH","SC","ZEC","ZEC","LTC","ETC","XRP","OMG","OMG","CVC","CVC","PART","QTUM","QTUM","XMR","XEM","XLM","NEO","XMR","DASH","BCC","BCC","BCC","DNT","DNT","NEO","WAVES","STRAT","DGB","FCT","OMG","ADA","MANA","MANA","SALT","SALT","TIX","TIX","RCN","RCN","VIB","VIB","MER","POWR","POWR","BTG","BTG","BTG","ADA","ENG","ENG","ADA","XVG","NXT","UKG","UKG","IGNIS","SRN","SRN","WAX","WAX","ZRX","ZRX","VEE","VEE","BCPT","BCPT","TRX","TRX"
-//];
-//let coins = [
-//"BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","USDT","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","ETH","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","BTC","ETH","ETH","USDT","ETH","BTC","BTC","BTC","BTC","BTC","ETH","ETH","ETH","ETH","BTC","ETH","BTC","ETH","ETH","BTC","ETH","BTC","BTC","BTC","BTC","ETH","ETH","BTC","ETH","ETH","BTC","ETH","BTC","ETH","BTC","ETH","BTC","ETH","ETH","ETH","BTC","ETH","BTC","BTC","BTC","ETH","BTC","ETH","BTC","ETH","BTC","ETH","BTC","ETH","ETH","ETH","ETH","USDT","USDT","USDT","USDT","BTC","ETH","BTC","ETH","BTC","BTC","ETH","ETH","ETH","ETH","ETH","USDT","USDT","ETH","USDT","BTC","BTC","ETH","USDT","ETH","ETH","ETH","ETH","USDT","BTC","BTC","ETH","BTC","ETH","BTC","ETH","BTC","ETH","BTC","ETH","BTC","BTC","ETH","BTC","ETH","USDT","ETH","BTC","ETH","USDT","USDT","USDT","BTC","ETH","BTC","BTC","ETH","BTC","ETH","BTC","ETH","BTC","ETH","BTC","ETH","BTC","ETH"
-//];
-let symbols = [
-"BTC-LTC","BTC-DOGE","BTC-VTC","BTC-PPC","BTC-FTC","BTC-RDD","BTC-NXT","BTC-DASH","BTC-POT","BTC-BLK","BTC-EMC2","BTC-XMY","BTC-AUR","BTC-EFL","BTC-GLD","BTC-SLR","BTC-PTC","BTC-GRS","BTC-NLG","BTC-RBY","BTC-XWC","BTC-MONA","BTC-THC","BTC-ENRG","BTC-ERC","BTC-VRC","BTC-CURE","BTC-XMR","BTC-CLOAK","BTC-START","BTC-KORE","BTC-XDN","BTC-TRUST","BTC-NAV","BTC-XST","BTC-VIA","BTC-PINK","BTC-IOC","BTC-CANN","BTC-SYS","BTC-NEOS","BTC-DGB","BTC-BURST","BTC-EXCL","BTC-SWIFT","BTC-DOPE","BTC-BLOCK","BTC-ABY","BTC-BYC","BTC-XMG","BTC-BLITZ","BTC-BAY","BTC-FAIR","BTC-SPR","BTC-VTR","BTC-XRP","BTC-GAME","BTC-COVAL","BTC-NXS","BTC-XCP","BTC-BITB","BTC-GEO","BTC-FLDC","BTC-GRC","BTC-FLO","BTC-NBT","BTC-MUE","BTC-XEM","BTC-CLAM","BTC-DMD","BTC-GAM","BTC-SPHR","BTC-OK","BTC-SNRG","BTC-PKB","BTC-CPC","BTC-AEON","BTC-ETH","BTC-GCR","BTC-TX","BTC-BCY","BTC-EXP","BTC-INFX","BTC-OMNI","BTC-AMP","BTC-AGRS","BTC-XLM","USDT-BTC","BTC-CLUB","BTC-VOX","BTC-EMC","BTC-FCT","BTC-MAID","BTC-EGC","BTC-SLS","BTC-RADS","BTC-DCR","BTC-BSD","BTC-XVG","BTC-PIVX","BTC-XVC","BTC-MEME","BTC-STEEM","BTC-2GIVE","BTC-LSK","BTC-PDC","BTC-BRK","BTC-WAVES","BTC-LBC","BTC-SBD","BTC-BRX","BTC-ETC","ETH-ETC","BTC-STRAT","BTC-UNB","BTC-SYNX","BTC-EBST","BTC-VRM","BTC-SEQ","BTC-REP","BTC-SHIFT","BTC-ARDR","BTC-XZC","BTC-NEO","BTC-ZEC","BTC-ZCL","BTC-IOP","BTC-GOLOS","BTC-UBQ","BTC-KMD","BTC-GBG","BTC-SIB","BTC-ION","BTC-LMC","BTC-QWARK","BTC-CRW","BTC-SWT","BTC-MLN","BTC-ARK","BTC-DYN","BTC-TKS","BTC-MUSIC","BTC-DTB","BTC-INCNT","BTC-GBYTE","BTC-GNT","BTC-NXC","BTC-EDG","BTC-LGD","BTC-TRST","ETH-GNT","ETH-REP","USDT-ETH","ETH-WINGS","BTC-WINGS","BTC-RLC","BTC-GNO","BTC-GUP","BTC-LUN","ETH-GUP","ETH-RLC","ETH-LUN","ETH-GNO","BTC-HMQ","ETH-HMQ","BTC-ANT","ETH-TRST","ETH-ANT","BTC-SC","ETH-BAT","BTC-BAT","BTC-ZEN","BTC-1ST","BTC-QRL","ETH-1ST","ETH-QRL","BTC-CRB","ETH-CRB","ETH-LGD","BTC-PTOY","ETH-PTOY","BTC-CFI","ETH-CFI","BTC-BNT","ETH-BNT","BTC-NMR","ETH-NMR","ETH-LTC","ETH-XRP","BTC-SNT","ETH-SNT","BTC-DCT","BTC-XEL","BTC-MCO","ETH-MCO","BTC-ADT","ETH-ADT","BTC-PAY","ETH-PAY","BTC-STORJ","ETH-STORJ","BTC-ADX","ETH-ADX","ETH-DASH","ETH-SC","ETH-ZEC","USDT-ZEC","USDT-LTC","USDT-ETC","USDT-XRP","BTC-OMG","ETH-OMG","BTC-CVC","ETH-CVC","BTC-PART","BTC-QTUM","ETH-QTUM","ETH-XMR","ETH-XEM","ETH-XLM","ETH-NEO","USDT-XMR","USDT-DASH","ETH-BCC","USDT-BCC","BTC-BCC","BTC-DNT","ETH-DNT","USDT-NEO","ETH-WAVES","ETH-STRAT","ETH-DGB","ETH-FCT","USDT-OMG","BTC-ADA","BTC-MANA","ETH-MANA","BTC-SALT","ETH-SALT","BTC-TIX","ETH-TIX","BTC-RCN","ETH-RCN","BTC-VIB","ETH-VIB","BTC-MER","BTC-POWR","ETH-POWR","BTC-BTG","ETH-BTG","USDT-BTG","ETH-ADA","BTC-ENG","ETH-ENG","USDT-ADA","USDT-XVG","USDT-NXT","BTC-UKG","ETH-UKG","BTC-IGNIS","BTC-SRN","ETH-SRN","BTC-WAX","ETH-WAX","BTC-ZRX","ETH-ZRX","BTC-VEE","ETH-VEE","BTC-BCPT","ETH-BCPT","BTC-TRX","ETH-TRX"
-];
+var request = require('request');
 
 var lambda = new AWS.Lambda({
   region: 'ap-northeast-2'
 });
 
-exports.handler = (event, context, callback) => {
-    for (let symbol of symbols) {
-        let coin = symbol.split('-')[0];
-        let base = symbol.split('-')[1];
+const url = 'https://bittrex.com/api/v1.1/public/getmarkets';
 
-        let attr = {
-            base: base,
-            coin: coin
-        };
-        lambda.invoke({
-            FunctionName: 'bittrex-collector',
-            Payload: JSON.stringify(attr, null, 0) // pass params
-        }, function(err, data){
-            if(err) console.log("err: ", base, coin, err, data);
-        });
-        //FOR TEST
-//         var index = require("./bittrex-index.js");
-//         index.handler(attr, context);
-    }
+exports.handler = (event, context, callback) => {
+    request(url, function(error, response, body) {
+        if (error) throw error;
+        let marketInfo = JSON.parse(body);
+        if(marketInfo.success) {
+            for( let market of marketInfo.result) {
+                let attr = {
+                    base: market.BaseCurrency,
+                    coin: market.MarketCurrency,
+                    symbol: market.MarketName
+                };
+                lambda.invoke({
+                    FunctionName: 'bittrex-collector',
+                    Payload: JSON.stringify(attr)
+                }, function(err, data){
+                    if(err) console.log("err: ", base, coin, err, data);
+                });
+                //FOR TEST
+                // var index = require("./bittrex-index.js");
+                // index.handler(attr, context);
+
+            }
+        } else {
+            throw new Error(marketInfo.message);
+        }
+    });
 }
