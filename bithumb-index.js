@@ -1,23 +1,24 @@
 var request = require("request");
-var coinone = require("./exchange/coinone");
+var bithumb = require("./exchange/bithumb");
 var queue = require("./queue");
 
-var market = "coinone";
-var API_URL = "https://api.coinone.co.kr/trades?currency=";
+var market = "bithumb";
+var API_URL = "https://api.bithumb.com/public/recent_transactions/%s?count=100";
 
 exports.handler = (event, context, callback) => {
     var coin = event.coin;
     var base = event.base;
-    var url = API_URL + coin;
+    var url = API_URL.replace('%s', coin);
     request(url, function(error, response, body) {
         if (error) throw error;
-        var orders = JSON.parse(body);
-        var ohlcv = coinone.getLatestOhlcv(orders);
+        let data = body;
+        var orders = JSON.parse(data);
+        var ohlcv = bithumb.getLatestOhlcv(orders);
         if (process.env.NODE_ENV == 'dev') {
             console.log(market, coin, base, ohlcv);
         }
         if(ohlcv) {
-            queue.put(ohlcv.ohlcv, ohlcv.ts, market, coin, base);
+          queue.put(ohlcv.ohlcv, ohlcv.ts, market, coin, base);
         }
     });
 }

@@ -1,18 +1,20 @@
 var request = require("request");
-var coinone = require("./exchange/coinone");
+var binance = require("./exchange/binance");
 var queue = require("./queue");
 
-var market = "coinone";
-var API_URL = "https://api.coinone.co.kr/trades?currency=";
+var market = "binance";
+var API_URL = "https://api.binance.com/api/v1/trades?symbol=";
 
 exports.handler = (event, context, callback) => {
     var coin = event.coin;
     var base = event.base;
-    var url = API_URL + coin;
+    var symbol = event.symbol;
+
+    var url = API_URL + symbol;
     request(url, function(error, response, body) {
         if (error) throw error;
         var orders = JSON.parse(body);
-        var ohlcv = coinone.getLatestOhlcv(orders);
+        var ohlcv = binance.getLatestOhlcv(orders);
         if (process.env.NODE_ENV == 'dev') {
             console.log(market, coin, base, ohlcv);
         }
@@ -21,3 +23,4 @@ exports.handler = (event, context, callback) => {
         }
     });
 }
+
