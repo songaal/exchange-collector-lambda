@@ -37,5 +37,7 @@ exports.getLatestOhlcv = function(data) {
     }
     if(trades > 0) {
         return { "ts":startTimestamp, "o": open, "h": high, "l": low, "c": close, "v": volume, "t": trades };
+    }else {
+        return false;
     }
 }

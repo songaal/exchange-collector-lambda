@@ -15,17 +15,20 @@ exports.getLatestOhlcv = function(data) {
     var volume = 0.0;
     var trades = 0;
 
-    for (var k = 0; k < data.length; k++) {
-        var o = data[k];
-        var ts = o.time;
-        var price = o.price;
+    for (var k = 0; k < data.result.length; k++) {
+        var o = data.result[k];
+        var ts = new Date(o.TimeStamp);
+        ts.setMilliseconds(0);
+        ts = ts.getTime();
+
+        var price = o.Price.toFixed(10);
 
         if (ts >= startTimestamp && ts < endTimestamp) {
             if(open == undefined) open = price;
             if(high == undefined || price > high) high = price;
             if(low == undefined || price < low) low = price;
             close = price;
-            volume += parseFloat(o.qty);
+            volume += parseFloat(o.Quantity);
             trades++;
         }
     }

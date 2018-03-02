@@ -3,18 +3,23 @@ var binance = require("./exchange/binance");
 var queue = require("./queue");
 
 var market = "binance";
-var API_URL = "https://api.binance.com/api/v1/exchangeInfo";
-
-// 일단 패스...
+var API_URL = "https://api.binance.com/api/v1/trades?symbol=";
 
 exports.handler = (event, context, callback) => {
-    request(API_URL, function(error, response, body) {
+    var coin = event.coin;
+    var base = event.base;
+    var symbol = event.symbol;
+
+    var url = API_URL + symbol;
+    request(url, function(error, response, body) {
         if (error) throw error;
         var orders = JSON.parse(body);
         var ohlcv = binance.getLatestOhlcv(orders);
-        //console.log('ohlcv',ohlcv);
+        if (process.env.NODE_ENV == 'dev') {
+            console.log(market, coin, base, ohlcv);
+        }
         if(ohlcv) {
-            //queue.put(ohlcv, market, coin, base);
+            queue.put(ohlcv, market, coin, base);
         }
     });
 }

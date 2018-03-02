@@ -7,8 +7,6 @@ exports.getLatestOhlcv = function(data) {
     startTime.setMinutes(startTime.getMinutes() - 9);
     var startTimestamp = startTime.getTime();
     var endTimestamp = endTime.getTime();
-    // console.log("time: ", startTime, " ~ ", endTime);
-    // console.log("timestamp: ", startTime.getTime(), " ~ ", endTime.getTime());
 
     var open;
     var high;
@@ -16,8 +14,6 @@ exports.getLatestOhlcv = function(data) {
     var close;
     var volume = 0.0;
     var trades = 0;
-    //console.log(new Date(data.timestamp*1000));
-    //"yyyy-MM-dd HH:mm:ss"
 
     for (var k = 0; k < data.data.length; k++) {
         var o = data.data[k];
@@ -36,5 +32,7 @@ exports.getLatestOhlcv = function(data) {
     }
     if(trades > 0) {
         return { "ts":startTimestamp, "o": open, "h": high, "l": low, "c": close, "v": volume, "t": trades };
+    }else {
+        return false;
     }
 }
