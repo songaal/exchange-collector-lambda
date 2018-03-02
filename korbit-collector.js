@@ -4,6 +4,7 @@ var queue = require("./queue");
 
 var market = "korbit";
 var API_URL = "https://api.korbit.co.kr/v1/transactions";
+var QUEUE_URL = process.env.QUEUE_URL;
 
 exports.handler = (event, context, callback) => {
     var coin = event.coin;
@@ -26,7 +27,7 @@ exports.handler = (event, context, callback) => {
             console.log(market, coin, base, data);
         }
         if (data) {
-            queue.put(data.ohlcv, data.ts, market, coin, base);
+            queue.put(data.ohlcv, data.ts, market, coin, base, QUEUE_URL);
         }
     });
 }
