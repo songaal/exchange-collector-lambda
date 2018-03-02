@@ -23,7 +23,7 @@ exports.handler = (event, context, callback) => {
             console.log(market, coin, base, ohlcv);
         }
         if(ohlcv) {
-            queue.put(ohlcv, market, coin, base);
+            queue.put(ohlcv.ohlcv, ohlcv.ts, market, coin, base);
         }
     });
 }

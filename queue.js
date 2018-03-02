@@ -2,7 +2,7 @@ var AWS = require('aws-sdk');
 
 var SQS_QUEUE_URL = "https://sqs.ap-northeast-2.amazonaws.com/868448630378/coin-price";
 
-exports.put = function(ohlcv, market, coin, base) {
+exports.put = function(ohlcv, timestamp, market, coin, base) {
     var messageBody = JSON.stringify(ohlcv);
     // Set the region
     AWS.config.update({region: 'ap-northeast-2'});
@@ -21,6 +21,10 @@ exports.put = function(ohlcv, market, coin, base) {
       "base": {
         DataType: "String",
         StringValue: base
+       },
+       "timestamp": {
+        DataType: "String",
+        StringValue: timestamp
        }
      },
      MessageBody: messageBody,
