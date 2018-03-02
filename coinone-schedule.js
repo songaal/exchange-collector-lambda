@@ -27,7 +27,7 @@ exports.handler = (event, context, callback) => {
 
         lambda.invoke({
             FunctionName: 'coinone-collector',
-            Payload: JSON.stringify(attr, null, 0) // pass params
+            Payload: JSON.stringify(attr) // pass params
         }, function(err, data){
             if(err) console.log("err: ", base, coin, err, data);
         });

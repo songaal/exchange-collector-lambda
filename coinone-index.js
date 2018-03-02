@@ -10,7 +10,7 @@ exports.handler = (event, context, callback) => {
     var base = event.base;
     var url = API_URL + coin;
     request(url, function(error, response, body) {
-        if (error) throw error;        
+        if (error) throw error;
         var orders = JSON.parse(body);
         var ohlcv = coinone.getLatestOhlcv(orders);
         if (process.env.NODE_ENV == 'dev') {
