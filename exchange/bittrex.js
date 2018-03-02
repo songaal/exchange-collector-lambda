@@ -17,11 +17,8 @@ exports.getLatestOhlcv = function(data) {
 
     for (var k = 0; k < data.result.length; k++) {
         var o = data.result[k];
-        var ts = new Date(o.TimeStamp);
-        ts.setMilliseconds(0);
-        ts = ts.getTime();
-
-        var price = o.Price.toFixed(10);
+        var ts = new Date(o.TimeStamp+"+00:00").getTime();
+        var price = o.Price;
 
         if (ts >= startTimestamp && ts < endTimestamp) {
             if (open == undefined) open = price;

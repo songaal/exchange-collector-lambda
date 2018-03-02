@@ -23,7 +23,7 @@ exports.handler = (event, context, callback) => {
     request(options, function(error, response, body) {
         if (error) throw error;
         var orders = JSON.parse(body);
-        var ohlcv = bithumb.getLatestOhlcv(orders);
+        var data = bithumb.getLatestOhlcv(orders);
         if (process.env.NODE_ENV == 'dev') {
             console.log(market, coin, base, data);
         }

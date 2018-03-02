@@ -31,7 +31,6 @@ exports.handler = (event, context, callback) => {
                     var index = require("./binance-collector.js");
                     index.handler(attr, context);
                 }
-
             }
         } else {
             throw new Error(marketInfo.message);

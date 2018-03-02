@@ -17,16 +17,18 @@ exports.getLatestOhlcv = function(data) {
 
     for (var k = 0; k < data.length; k++) {
         var o = data[k];
-        var ts = o.time;
-        var price = o.price;
+        var ts = o[0];
 
+        // binance는 1분봉 데이터를 받으므로, 통계없이 값을 직접 입력한다.
+        // 자료구조 : https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md#klinecandlestick-data
         if (ts >= startTimestamp && ts < endTimestamp) {
-            if (open == undefined) open = price;
-            if (high == undefined || price > high) high = price;
-            if (low == undefined || price < low) low = price;
-            close = price;
-            volume += parseFloat(o.qty);
-            trades++;
+            open = o[1];
+            high = o[2];
+            low = o[3];
+            close = o[4];
+            volume = o[5];
+            trades = o[8];
+            break;
         }
     }
 
