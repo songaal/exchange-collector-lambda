@@ -19,6 +19,9 @@ exports.handler = (event, context, callback) => {
                     symbol: market.symbol
                 };
 
+                if (process.env.NODE_ENV == 'dev') {
+                    console.log(attr);
+                }
                 if (process.env.MODE != 'local') {
                     lambda.invoke({
                         FunctionName: 'binance-collector',
