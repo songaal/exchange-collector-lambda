@@ -26,7 +26,8 @@
 //        console.log(baseList);
 //    });
 //}
-
+var index = require("./binance-schedule.js");
+index.handler({}, {});
 exports.handler = (event, context, callback) => {
     var index = require("./binance-schedule.js");
     index.handler({}, context);
