@@ -4,12 +4,27 @@ var request = require('request');
 var lambda = new AWS.Lambda({
     region: 'ap-northeast-2'
 });
+var s3 = new AWS.S3();
 
 const url = 'https://api.binance.com/api/v1/exchangeInfo'
 
 exports.handler = (event, context, callback) => {
     request(url, function(error, response, body) {
         if (error) throw error;
+
+        // put json to s3 file
+        var base64data = new Buffer(body, 'binary');
+        s3.client.putObject({
+            Bucket: 'coinview.gncloud.io',
+            Key: 'static/binance-markets.json',
+            Body: base64data,
+            ACL: 'public-read'
+          },function (resp) {
+            console.log(arguments);
+            console.log('Successfully uploaded package.');
+        });
+
+
         let marketInfo = JSON.parse(body);
         if (marketInfo.symbols) {
             for (let market of marketInfo.symbols) {
