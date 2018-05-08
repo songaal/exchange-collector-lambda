@@ -1,15 +1,24 @@
-// var lambda = require('./exchange-scheduler.js');
-//
-// event = {
-//         "exchange": "binance",
-//         "key2": "value2",
-//         "key3": "value3",
-//         "key4": "value4"
-//     }
+testCollector = function() {
+    var lambda = require('./bulk-collector.js');
+    event = {
+        "exchange": "binance",
+        "key2": "value2",
+        "key3": "value3",
+        "key4": "value4"
+    }
+    lambda.handler(event, null);
+}
 
-var lambda = require('./exchange-collector.js');
-event = { base: 'BTC',
-  coin: 'ETH',
-  symbol: 'ETH/BTC',
-  exchange: 'binance' }
-lambda.handler(event, null);
+
+testBinance = function() {
+    console.log("testBinance")
+    var lambda = require('./binance-collector.js');
+    event = {
+            "coin": "ETH",
+            "base": "BTC",
+            "symbol": "ETHBTC"
+        }
+    lambda.handler(event, null);
+}
+
+testCollector()
