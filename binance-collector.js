@@ -25,6 +25,7 @@ exports.handler = (event, context, callback) => {
         if (error) throw error;
         var kline = JSON.parse(body);
         var data = binance.getLatestOhlcv(kline);
+        console.log(body)
         if (process.env.NODE_ENV == 'dev') {
             console.log(market, coin, base, data);
         }
