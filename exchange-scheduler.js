@@ -8,7 +8,7 @@ var lambda = new AWS.Lambda({
 exports.handler = (event, context, callback) => {
 
     (async () => {
-        var exchange_id = event.exchange
+        let exchange_id = event.exchange
         let exchange = new (ccxt)[exchange_id] ()
         let markets = await exchange.load_markets ()
 
@@ -19,7 +19,8 @@ exports.handler = (event, context, callback) => {
             let attr = {
                 base: market.info.quoteAsset,
                 coin: market.info.baseAsset,
-                symbol: market.info.symbol
+                symbol: market.info.symbol,
+                exchange: exchange_id
             };
             lambda.invoke({
                 FunctionName: 'bulk-collector',
