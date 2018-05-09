@@ -1,8 +1,7 @@
-<<<<<<< HEAD:exchange-collector.js
 let ccxt = require('ccxt');
 let queue = require("./queue");
-let QUEUE_URL = process.env.QUEUE_URL;
-let maxSize = 3
+const QUEUE_URL = process.env.QUEUE_URL;
+const maxSize = 3
 exports.handler = (event, context, callback) => {
     let exchange_id = event.exchange;
     let exchange = new ccxt[exchange_id] ()
@@ -11,14 +10,6 @@ exports.handler = (event, context, callback) => {
           let coin = event.coin;
           let base = event.base;
           let symbol = event.symbol;
-=======
-var request = require("request");
-var ccxt = require('ccxt');
-var queue = require("./queue");
-var exchangeOhlcv = require('./exchange-ohlcv')
-
-var QUEUE_URL = process.env.QUEUE_URL;
->>>>>>> 48beb392b795708ca7e35de9cd63586464806014:fetch-exchange-ohlcv/exchange-collector.js
 
           data = await exchange.fetchOHLCV (symbol, '1m', undefined, maxSize)
           let o = data[data.length - 1]
