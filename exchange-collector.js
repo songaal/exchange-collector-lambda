@@ -4,7 +4,8 @@ var queue = require("./queue");
 var exchangeOhlcv = require('./exchange/exchange-ohlcv')
 
 var QUEUE_URL = process.env.QUEUE_URL;
-QUEUE_URL = "https://sqs.ap-northeast-2.amazonaws.com/868448630378/test-price"
+
+
 exports.handler = (event, context, callback) => {
     (async () => {
       let coin = event.coin;
