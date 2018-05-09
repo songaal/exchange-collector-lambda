@@ -1,7 +1,15 @@
 var AWS = require('aws-sdk');
 
-exports.put = function (ohlcv, timestamp, market, coin, base, queueUrl) {
-    var messageBody = JSON.stringify(ohlcv);
+exports.put = function (data, exchange, coin, base, queueUrl) {
+    candle = {
+        't': data[0],
+        'o': data[1],
+        'h': data[2],
+        'l': data[3],
+        'c': data[4],
+        'v': data[5],
+    }
+    var messageBody = JSON.stringify(candle);
     // Set the region
     AWS.config.update({
         region: 'ap-northeast-2'
@@ -12,13 +20,9 @@ exports.put = function (ohlcv, timestamp, market, coin, base, queueUrl) {
 
     var params = {
         MessageAttributes: {
-            "timestamp": {
-                DataType: "Number",
-                StringValue: timestamp.toString()
-            },
-            "market": {
+            "exchange": {
                 DataType: "String",
-                StringValue: market
+                StringValue: exchange
             },
             "coin": {
                 DataType: "String",
@@ -56,8 +60,8 @@ exports.bulk_put = function (dataList, exchange, coin, base, queueUrl) {
 
     for (let i = 0; i < dataList.length; i++) {
         data = dataList[i]
-        timestamp = data[0]
         candle = {
+            't': data[0],
             'o': data[1],
             'h': data[2],
             'l': data[3],
@@ -68,11 +72,7 @@ exports.bulk_put = function (dataList, exchange, coin, base, queueUrl) {
         let entry = {
             Id: i.toString(),
             MessageAttributes: {
-                "timestamp": {
-                    DataType: "Number",
-                    StringValue: timestamp.toString()
-                },
-                "market": {
+                "exchange": {
                     DataType: "String",
                     StringValue: exchange
                 },
@@ -97,6 +97,6 @@ exports.bulk_put = function (dataList, exchange, coin, base, queueUrl) {
 
     sqs.sendMessageBatch(params, function (err, data) {
         if (err) console.log(err, err.stack); // an error occurred
-        else console.log(data);           // successful response
+        //else console.log(data);           // successful response
     });
 }
