@@ -23,28 +23,23 @@ module.exports = function(functionName, exchange_id, symbol, coin, base, since, 
             symbol: symbol,
             since: since,
             limit: limit
-
-        };
+        }
         console.log(new Date(), symbol, k, new Date(since).toLocaleString(), attr);
+        let retSince
         if (process.env.DRY_RUN != 'true') {
-            lambda.invoke({
+            ret = lambda.invoke({
                 FunctionName: functionName,
                 Payload: JSON.stringify(attr)
             }, function (err, data) {
                 if (err) console.log(attr.base, attr.coin, err, err.stack);
-                else console.log(data)
             });
+            if(ret.StatusCode == 200) {
+                retSince = ret.Payload
+            }
         }
-
-        size = dataList.length
-        if (process.env.DRY_RUN != 'true') {
-            queue.bulk_put(dataList, exchange_id, coin, base, QUEUE_URL);
-        }
-
-        lastData = dataList[size - 1]
         // 마지막 시간을 확인하고 다음 루프의 since 시간으로 셋팅한다.
         lastSince = since
-        since = lastData[0]
+        since = retSince
     }
     console.log(new Date(), '--------------------------')
 }

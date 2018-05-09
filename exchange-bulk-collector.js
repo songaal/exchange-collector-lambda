@@ -21,7 +21,7 @@ exports.handler = (event, context, callback) => {
             }
             lastData = dataList[size - 1]
             // 마지막 시간을 리턴한다.
-            return lastData[0]
+            callback(null, lastData[0]);
         }, function (err) {
             console.log(err);
         })
