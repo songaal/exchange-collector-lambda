@@ -19,8 +19,7 @@ async function run() {
         let coin = market.info.baseAsset
         let k = 1
         console.log('['+i+'/'+total+']' ,exchange_id, symbol)
-        let since = 1491004800000 // 2017.4.1
-        //since =     1525844400000 //2018.5.9 14:40:00
+        let since = SINCE_TIME
         let lastSince = 0
         while(true) {
             if(since == lastSince) {

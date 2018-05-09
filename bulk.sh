@@ -6,8 +6,4 @@ export LIMIT=500
 export SINCE_TIME=1491004800000
 
 trap '' 1
-
 node bulk-collector.js >> system.log 2>&1 &
-
-sleep 1
-tail -f system.log
