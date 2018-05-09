@@ -1,7 +1,8 @@
 let ccxt = require('ccxt');
 let queue = require("./queue");
 const QUEUE_URL = process.env.QUEUE_URL;
-const maxSize = 3
+const limit = 3
+
 exports.handler = (event, context, callback) => {
     let coin = event.coin
     let base = event.base
@@ -9,7 +10,7 @@ exports.handler = (event, context, callback) => {
     let exchange_id = event.exchange;
     let exchange = new ccxt[exchange_id]()
     if (exchange.has.fetchOHLCV == true) {
-        let promise = exchange.fetchOHLCV(symbol, '1m', undefined, maxSize)
+        let promise = exchange.fetchOHLCV(symbol, '1m', undefined, limit)
         promise.then(function(dataList){
             let data = dataList[dataList.length - 1]
 

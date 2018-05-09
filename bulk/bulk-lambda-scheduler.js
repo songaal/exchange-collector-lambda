@@ -1,7 +1,8 @@
-let ccxt = require('ccxt')
-let queue = require("./queue")
-let QUEUE_URL = process.env.QUEUE_URL
-let exchange_id = process.env.EXCHANGE
+const AWS = require('aws-sdk')
+const worker = require('./bulk-worker')
+const lambda = new AWS.Lambda({
+    region: 'ap-northeast-2'
+});
 let limit = Number(process.env.LIMIT)
 let SINCE_TIME = Number(process.env.SINCE_TIME)
 let RESUME_SYMBOL = process.env.RESUME_SYMBOL
@@ -46,7 +47,17 @@ async function run() {
                 break;
             }
             console.log(new Date(), k, new Date(since).toLocaleString(), symbol, since);
-            dataList = await exchange.fetchOHLCV (symbol, '1m', since, limit)
+            console.log('call lambda function ', functionName, ', attr:', attr)
+            if (process.env.DRY_RUN != 'true') {
+                lambda.invoke({
+                    FunctionName: functionName,
+                    Payload: JSON.stringify(attr)
+                }, function (err, data) {
+                    if (err) console.log(attr.base, attr.coin, err, err.stack);
+                    else console.log(data)
+                });
+            }
+
             size = dataList.length
             if (process.env.DRY_RUN != 'true') {
                 queue.bulk_put(dataList, exchange_id, coin, base, QUEUE_URL);
