@@ -3,7 +3,7 @@ testCollector = function() {
     event = { base: 'BTC',
       coin: 'ETH',
       symbol: 'ETH/BTC',
-      exchange: 'binance' }
+      exchange: 'bittrex' }
     lambda.handler(event, null);
 }
 
