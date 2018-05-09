@@ -26,6 +26,8 @@ exports.handler = (event, context, callback) => {
                 if (err) console.log("err: ", attr.base, attr.coin, err, data);
             });
         }
+      }else {
+        console.log('Unsupported exchange OHLCV')
       }
   })()
 }
