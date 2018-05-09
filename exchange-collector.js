@@ -9,21 +9,21 @@ exports.handler = (event, context, callback) => {
     let exchange_id = event.exchange;
     let exchange = new ccxt[exchange_id]()
     if (exchange.has.fetchOHLCV == true) {
-        let dataList;
-        (async () => {
-            dataList = await exchange.fetchOHLCV(symbol, '1m', undefined, maxSize)
-        })()
+        let promise = exchange.fetchOHLCV(symbol, '1m', undefined, maxSize)
+        promise.then(function(dataList){
+            let data = dataList[dataList.length - 1]
 
-        let data = dataList[dataList.length - 1]
-
-        if (process.env.NODE_ENV == 'dev') {
-            console.log(exchange_id, symbol, coin, base, data);
-        }
-        if (process.env.DRY_RUN != 'true') {
-            if (data) {
-                queue.put(data, symbol, coin, base, QUEUE_URL);
+            if (process.env.NODE_ENV == 'dev') {
+                console.log(exchange_id, symbol, coin, base, data);
             }
-        }
+            if (process.env.DRY_RUN != 'true') {
+                if (data) {
+                    queue.put(data, symbol, coin, base, QUEUE_URL);
+                }
+            }
+        }, function (err) {
+            console.log(err);
+        })
 
     } else {
         console.log(exchange_id, 'exchange not support candle api.')
