@@ -15,7 +15,6 @@ exports.handler = (event, context, callback) => {
     let exchange = new (ccxt)[exchange_id]()
     let promise = exchange.load_markets()
     promise.then(function (markets) {
-        console.log('markets>> ', markets)
         //1. 최신 market symbol 들을 s3 정적호스팅에 업데이트 해준다.
         S3.putObject({
             Bucket: bucket,
