@@ -4,8 +4,8 @@ var lambda = new AWS.Lambda({
     region: 'ap-northeast-2'
 });
 var S3 = new AWS.S3()
-excnhage = process.env.EXCHANGE
-bucket = process.env.BUCKET
+var excnhage = process.env.EXCHANGE
+var bucket = process.env.BUCKET
 var s3_prefix = 'static'
 var s3_suffix = '-markets.json'
 
