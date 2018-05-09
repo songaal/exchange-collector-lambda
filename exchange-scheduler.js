@@ -27,7 +27,6 @@ exports.handler = (event, context, callback) => {
 
         //2. 캔들정보 함수가 있다면
         if (exchange.has.fetchOHLCV == true) {
-            undefined
             for (let symbol in markets) {
                 market = markets[symbol]
                 let attr = {

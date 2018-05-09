@@ -14,11 +14,11 @@ exports.handler = (event, context, callback) => {
             let data = dataList[dataList.length - 1]
 
             if (process.env.NODE_ENV == 'dev') {
-                console.log(exchange_id, symbol, coin, base, data);
+                console.log(exchange_id, coin, base, data);
             }
             if (process.env.DRY_RUN != 'true') {
                 if (data) {
-                    queue.put(data, symbol, coin, base, QUEUE_URL);
+                    queue.put(data, exchange_id, coin, base, QUEUE_URL);
                 }
             }
         }, function (err) {
