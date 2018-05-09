@@ -19,4 +19,12 @@ testBinance = function() {
     lambda.handler(event, null);
 }
 
-testCollector()
+testScduler = function() {
+    "cmd: EXCHANGE=bithumb node lambda.js "
+    console.log("testScduler")
+    var lambda = require('./exchange-scheduler.js');
+    event = {}
+    lambda.handler({}, null);
+}
+
+testScduler()
