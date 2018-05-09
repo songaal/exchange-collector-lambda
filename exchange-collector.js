@@ -11,27 +11,19 @@ exports.handler = (event, context, callback) => {
           let base = event.base;
           let symbol = event.symbol;
 
-          data = await exchange.fetchOHLCV (symbol, '1m', undefined, maxSize)
-          let o = data[data.length - 1]
-          let ohlcv = {
-              "o": o[1],
-              "h": o[2],
-              "l": o[3],
-              "c": o[4],
-              "v": o[5]
-          }
-          let ts = o[0]
+          dataList = await exchange.fetchOHLCV (symbol, '1m', undefined, maxSize)
+          let data = dataList[dataList.length - 1]
 
           if (process.env.NODE_ENV == 'dev') {
               console.log(exchange_id, ts, symbol, coin, base, ohlcv);
           }
           if (process.env.DRY_RUN != 'true') {
               if (ohlcv) {
-                  queue.put(ohlcv, ts, symbol, coin, base, QUEUE_URL);
+                  queue.put(data, symbol, coin, base, QUEUE_URL);
               }
           }
         }) ()
     } else {
-        console.log("[Error] Not support fetchOHLCV for " + exchange_id, 'exchange.has.fetchOHLCV=', exchange.has.fetchOHLCV);
+        console.log("[Error] Not support fetchOHLCV for ", exchange_id, 'exchange.has.fetchOHLCV=', exchange.has.fetchOHLCV);
     }
 }
