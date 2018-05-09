@@ -2,8 +2,8 @@ let ccxt = require('ccxt')
 let queue = require("./queue")
 let QUEUE_URL = process.env.QUEUE_URL
 let exchange_id = process.env.EXCHANGE
-let limit = 500
-// limit = 10
+let limit = Number(process.env.LIMIT)
+let SINCE_TIME = Number(process.env.SINCE_TIME)
 
 async function run() {
     let exchange = new (ccxt)[exchange_id] ()
