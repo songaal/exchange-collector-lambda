@@ -1,10 +1,10 @@
 testCollector = function() {
-    var lambda = require('./exchange-collector.js');
+    var lambda = require('./exchange-scheduler.js');
     event = { base: 'BTC',
       coin: 'ETH',
       symbol: 'ETH/BTC',
       exchange: 'bittrex' }
-    lambda.handler(event, null);
+    lambda.handler({}, null);
 }
 
 
