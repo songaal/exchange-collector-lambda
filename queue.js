@@ -57,8 +57,8 @@ exports.bulk_put = function (dataList, exchange, coin, base, queueUrl) {
     });
 
     entries = []
-
     for (let i = 0; i < dataList.length; i++) {
+
         data = dataList[i]
         candle = {
             't': data[0],
@@ -87,16 +87,31 @@ exports.bulk_put = function (dataList, exchange, coin, base, queueUrl) {
             },
             MessageBody: messageBody
         };
+
         entries.push(entry)
+        if(entries.length == 10) {
+            let params = {
+                Entries: entries,
+                QueueUrl: queueUrl
+            };
+            //console.log('send batch >> ', params)
+            sqs.sendMessageBatch({
+                Entries: entries,
+                QueueUrl: queueUrl
+            }, function (err, data) {
+                if (err) console.log(err, err.stack);
+            });
+            entries = []
+        }
+
     }
 
-    var params = {
-        Entries: entries,
-        QueueUrl: queueUrl
-    };
-
-    sqs.sendMessageBatch(params, function (err, data) {
-        if (err) console.log(err, err.stack); // an error occurred
-        //else console.log(data);           // successful response
-    });
+    if(entries.length > 0) {
+        sqs.sendMessageBatch({
+            Entries: entries,
+            QueueUrl: queueUrl
+        }, function (err, data) {
+            if (err) console.log(err, err.stack);
+        });
+    }
 }
