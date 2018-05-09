@@ -1,7 +1,7 @@
 var request = require("request");
 var ccxt = require('ccxt');
 var queue = require("./queue");
-var exchangeOhlcv = require('./exchange/exchange-ohlcv')
+var exchangeOhlcv = require('./exchange-ohlcv')
 
 var QUEUE_URL = process.env.QUEUE_URL;
 
