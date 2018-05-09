@@ -12,9 +12,8 @@ async function run() {
 
     if(RESUME_SYMBOL != undefined && RESUME_SEQ != NaN) {
         resume = false
-        console.log(new Date(), 'RESUME_SYMBOL=', RESUME_SYMBOL, 'RESUME_SEQ=', RESUME_SEQ)
+        console.log(new Date(), 'RESUME_SYMBOL=' + RESUME_SYMBOL + ', RESUME_SEQ=' + RESUME_SEQ)
     }
-    return
 
     let exchange = new (ccxt)[exchange_id] ()
     let markets = await exchange.loadMarkets ()
