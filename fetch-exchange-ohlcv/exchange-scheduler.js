@@ -6,24 +6,19 @@ var lambda = new AWS.Lambda({
 });
 
 exports.handler = (event, context, callback) => {
-
-  ccxt.exchanges.forEach (id => {
-    // console.log('exchange id:', id)
-    (async () => {
-        let exchange_id = id
-        let exchange = new (ccxt)[exchange_id] ()
-        let markets = await exchange.load_markets ()
+  (async () => {
+      let exchange_id = process.env.EXCHANGE
+      let exchange = new (ccxt)[exchange_id] ()
+      let markets = await exchange.load_markets ()
+      if (exchange.has.fetchOHLCV == true){
         for (var key in markets) {
             market = markets[key]
-            // console.log(market)
-            // console.log('-------------------')
             let attr = {
                 base: market.info.quoteAsset,
                 coin: market.info.baseAsset,
                 symbol: market.symbol,
                 exchange: exchange_id
             };
-
             lambda.invoke({
                 FunctionName: 'exchange-collector',
                 Payload: JSON.stringify(attr)
@@ -31,6 +26,8 @@ exports.handler = (event, context, callback) => {
                 if (err) console.log("err: ", attr.base, attr.coin, err, data);
             });
         }
-    })()
-  })
+      }else {
+        console.log('Unsupported exchange OHLCV')
+      }
+  })()
 }
