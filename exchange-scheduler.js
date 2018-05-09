@@ -7,21 +7,23 @@ var lambda = new AWS.Lambda({
 
 exports.handler = (event, context, callback) => {
 
+  ccxt.exchanges.forEach (id => {
+    // console.log('exchange id:', id)
     (async () => {
-        let exchange_id = event.exchange
+        let exchange_id = id
         let exchange = new (ccxt)[exchange_id] ()
         let markets = await exchange.load_markets ()
         for (var key in markets) {
             market = markets[key]
-            console.log(market)
-            console.log('-------------------')
+            // console.log(market)
+            // console.log('-------------------')
             let attr = {
                 base: market.info.quoteAsset,
                 coin: market.info.baseAsset,
                 symbol: market.symbol,
                 exchange: exchange_id
             };
-            
+
             lambda.invoke({
                 FunctionName: 'exchange-collector',
                 Payload: JSON.stringify(attr)
@@ -30,4 +32,5 @@ exports.handler = (event, context, callback) => {
             });
         }
     })()
+  })
 }
