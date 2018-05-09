@@ -5,8 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "ccxt": "^1.13.101",
-    "aws-sdk": "^2.234.1",
-    "request": "^2.85.0"
+    "aws-sdk": "^2.234.1"
   },
   "devDependencies": {},
   "scripts": {
