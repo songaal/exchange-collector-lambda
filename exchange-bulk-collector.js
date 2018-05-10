@@ -23,7 +23,7 @@ exports.handler = (event, context, callback) => {
             // 마지막 시간을 리턴한다.
             callback(null, lastData[0]);
         }, function (err) {
-            console.log(err);
+            callback(err, null);
         })
 
     } else {

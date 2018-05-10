@@ -5,37 +5,47 @@ const lambda = new AWS.Lambda({
 /*
 * 이 worker는 1. 람다를 호출하고 2. 리턴받은 timestamp로 다시 그 다음 람다를 호출하고 3. timestamp 가 null 일때 까지 호출해준다.
 * */
-module.exports = function(functionName, exchange_id, symbol, coin, base, since, limit){
+function Worker(functionName, exchange_id) {
+    this.functionName = functionName
+    this.exchange_id = exchange_id
+}
+
+Worker.prototype.call = async function(symbol, coin, base, since, limit) {
     let k = 0
-    console.log(new Date(), '['+i+'/'+total+']' ,exchange_id, symbol)
+    console.log(new Date(), this.exchange_id, symbol)
     let lastSince = 0
-    while(true) {
+    while (true) {
         k++
-        if(since == lastSince) {
+        if (since == lastSince || isNaN(since)) {
             //더이상 최신데이터가 없다면 종료한다.
-            console.log(new Date(), 'No more new data since ', new Date(since).toLocaleString(), since)
+            console.log(new Date(), symbol, k, 'No more new data since ', new Date(since).toLocaleString(), since, limit)
             break;
         }
         let attr = {
-            exchange: exchange_id,
+            exchange: this.exchange_id,
             coin: coin,
             base: base,
             symbol: symbol,
             since: since,
             limit: limit
         }
-        console.log(new Date(), symbol, k, new Date(since).toLocaleString(), attr);
-        let retSince
+        console.log(new Date(), symbol, k, new Date(since).toLocaleString(), since, limit);
+        let retSince = null
         if (process.env.DRY_RUN != 'true') {
-            ret = lambda.invoke({
-                FunctionName: functionName,
+            await lambda.invoke({
+                FunctionName: this.functionName,
                 Payload: JSON.stringify(attr)
-            }, function (err, data) {
-                if (err) console.log(attr.base, attr.coin, err, err.stack);
+            }).promise().then(function(data) {
+                // 이행(fulfillment)
+                if (data.StatusCode == 200) {
+                    if(data.Payload == 'null') {
+                        console.log(new Date(), 'Api error!', new Date(since).toLocaleString(), since, limit)
+                    }
+                    retSince = Number(data.Payload)
+                }
+            }, function(err) {
+                console.log(attr.base, attr.coin, err, err.stack);
             });
-            if(ret.StatusCode == 200) {
-                retSince = ret.Payload
-            }
         }
         // 마지막 시간을 확인하고 다음 루프의 since 시간으로 셋팅한다.
         lastSince = since
@@ -43,3 +53,5 @@ module.exports = function(functionName, exchange_id, symbol, coin, base, since, 
     }
     console.log(new Date(), '--------------------------')
 }
+
+module.exports = Worker

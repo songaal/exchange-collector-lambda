@@ -35,17 +35,33 @@ testBulkLambda = function () {
         base: 'BTC',
         symbol: 'BNB/BTC',
         since: 1491004800000,
-        limit: 500
+        limit: 10
     }
-    ret = lambda.invoke({
+    let ret = lambda.invoke({
         FunctionName: functionName,
         Payload: JSON.stringify(attr)
     }, function (err, data) {
         if (err) console.log(attr.base, attr.coin, err, err.stack);
-        else console.log(data)
-    });
+        else console.log('data>>', data)
 
-    console.log(ret)
+        if (data.StatusCode == 200) {
+            retSince = data.Payload
+            console.log('retSince>>', retSince)
+        }
+    });
 }
 
-testBulkLambda()
+let Worker = require('./bulk/bulk-worker.js');
+testBulkWorker = function () {
+    let since = 1525915800000
+    let limit = 500
+    let size = 4
+    workers = new Array(size)
+    coins = ['ETH','BNB', 'XRP', 'BCC']
+    for(let i=0;i<size;i++) {
+        workers[i] = new Worker('exchange-bulk-collector', 'binance')
+        workers[i].call(coins[i] + '/BTC', coins[i], 'BTC', since, limit)
+    }
+}
+
+testBulkWorker()
