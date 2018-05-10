@@ -25,8 +25,11 @@ Worker.prototype.callQueue = async function (symbolQueue, since, limit) {
         const tmp = symbol.split("/")
         const coin = tmp[0]
         const base = tmp[1]
-        // await call(symbol, coin, base, since, limit)
-        await new Promise(x => setTimeout(x, 1000))
+        if (process.env.DRY_RUN != 'true') {
+            await call(symbol, coin, base, since, limit)
+        } else {
+            await new Promise(x => setTimeout(x, 1000))
+        }
     }
 }
 
