@@ -1,14 +1,24 @@
+let ccxt = require('ccxt');
 let Worker = require('./bulk-worker.js');
+
+let since = 1525915800000
+let limit = 500
+let workerSize = 4
+let exchange_id = 'binance'
+
 function run() {
-    let since = 1525915800000
-    let limit = 500
-    let size = 4
-    workers = new Array(size)
-    coins = ['ETH', 'BNB', 'XRP', 'BCC']
-    for (let i = 0; i < size; i++) {
-        workers[i] = new Worker('exchange-bulk-collector', 'binance')
-        workers[i].call(coins[i] + '/BTC', coins[i], 'BTC', since, limit)
-    }
+    let exchange = new (ccxt)[exchange_id]()
+    let promise = exchange.load_markets()
+    promise.then(function (markets) {
+        const symbolQueue = Object.keys(markets)
+        console.log('totalSize=', symbolQueue.length)
+        for (let i = 0; i < workerSize; i++) {
+            let worker = new Worker(i, 'exchange-bulk-collector', 'binance')
+            worker.callQueue(symbolQueue, since, limit)
+        }
+    }, function (err) {
+        console.log(err);
+    })
 }
 
 run()

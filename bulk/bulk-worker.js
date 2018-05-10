@@ -2,15 +2,35 @@ const AWS = require('aws-sdk')
 const lambda = new AWS.Lambda({
     region: 'ap-northeast-2'
 });
+
 /*
 * 이 worker는 1. 람다를 호출하고 2. 리턴받은 timestamp로 다시 그 다음 람다를 호출하고 3. timestamp 가 null 일때 까지 호출해준다.
 * */
-function Worker(functionName, exchange_id) {
+function Worker(id, functionName, exchange_id) {
+    this.id = id
     this.functionName = functionName
     this.exchange_id = exchange_id
 }
 
-Worker.prototype.call = async function(symbol, coin, base, since, limit) {
+Worker.prototype.callQueue = async function (symbolQueue, since, limit) {
+    let k = 1
+    while (true) {
+        symbol = symbolQueue.shift()
+        if (!symbol) {
+            console.log('Worker-' + this.id + ' done!')
+            break;
+        }
+
+        console.log('Worker-' + this.id, k++, symbol)
+        const tmp = symbol.split("/")
+        const coin = tmp[0]
+        const base = tmp[1]
+        // await call(symbol, coin, base, since, limit)
+        await new Promise(x => setTimeout(x, 1000))
+    }
+}
+
+Worker.prototype.call = async function (symbol, coin, base, since, limit) {
     let k = 0
     console.log(new Date(), this.exchange_id, symbol)
     let lastSince = 0
@@ -35,15 +55,15 @@ Worker.prototype.call = async function(symbol, coin, base, since, limit) {
             await lambda.invoke({
                 FunctionName: this.functionName,
                 Payload: JSON.stringify(attr)
-            }).promise().then(function(data) {
+            }).promise().then(function (data) {
                 // 이행(fulfillment)
                 if (data.StatusCode == 200) {
-                    if(data.Payload == 'null') {
+                    if (data.Payload == 'null') {
                         console.log(new Date(), 'Api error!', new Date(since).toLocaleString(), since, limit)
                     }
                     retSince = Number(data.Payload)
                 }
-            }, function(err) {
+            }, function (err) {
                 console.log(attr.base, attr.coin, err, err.stack);
             });
         }
