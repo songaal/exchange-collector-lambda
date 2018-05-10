@@ -55,6 +55,7 @@ Worker.prototype.call = async function (symbol, coin, base, since, limit) {
         console.log(new Date(), symbol, k, new Date(since).toLocaleString(), since, limit);
         let retSince = null
         if (process.env.DRY_RUN != 'true') {
+            let failed = false
             await lambda.invoke({
                 FunctionName: this.functionName,
                 Payload: JSON.stringify(attr)
@@ -68,7 +69,18 @@ Worker.prototype.call = async function (symbol, coin, base, since, limit) {
                 }
             }, function (err) {
                 console.log(attr.base, attr.coin, err, err.stack);
+            }).catch(function(reason) {
+                // 거부
+                console.log('Worker-' + this.id + 'error', reason);
+                failed = true
             });
+
+            if(failed) {
+                console.log('Worker-' + this.id + ' retry.. wait..')
+                await new Promise(x => setTimeout(x, 60000));
+                continue
+                k--
+            }
         }
         // 마지막 시간을 확인하고 다음 루프의 since 시간으로 셋팅한다.
         lastSince = since
