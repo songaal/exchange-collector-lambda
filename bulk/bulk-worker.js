@@ -56,30 +56,38 @@ Worker.prototype.call = async function (symbol, coin, base, since, limit) {
         let retSince = null
         if (process.env.DRY_RUN != 'true') {
             let failed = false
-            await lambda.invoke({
-                FunctionName: this.functionName,
-                Payload: JSON.stringify(attr)
-            }).promise().then(function (data) {
-                if (data.StatusCode == 200) {
-                    if (data.Payload == 'null') {
-                        console.log(new Date(), 'Api error!', new Date(since).toLocaleString(), since, limit)
-                    }
-                    retSince = Number(data.Payload)
-                    console.log(new Date(), symbol, k, 'Next > ', retSince, data.Payload);
-                }
-            }, function (err) {
-                console.log(attr.base, attr.coin, err, err.stack);
-            }).catch(function(reason) {
-                // 거부
-                console.log('Worker-' + this.id + 'error', reason);
-                failed = true
-            });
 
-            if(failed) {
-                console.log('Worker-' + this.id + ' retry.. wait..')
-                await new Promise(x => setTimeout(x, 60000));
-                continue
-                k--
+            while(true) {
+                await lambda.invoke({
+                    FunctionName: this.functionName,
+                    Payload: JSON.stringify(attr)
+                }).promise().then(function (data) {
+                    if (data.StatusCode == 200) {
+                        if (data.Payload == 'null') {
+                            console.log(new Date(), 'Api error!', new Date(since).toLocaleString(), since, limit)
+                        }
+                        let ret = data.Payload
+                        if (isNaN(Number(ret))) {
+                            failed = true
+                        } else {
+                            retSince = Number(ret)
+                        }
+                        console.log(new Date(), symbol, k, 'Next > ', retSince, ret);
+                    }
+                }, function (err) {
+                    console.log(attr.base, attr.coin, err, err.stack);
+                }).catch(function (reason) {
+                    // 거부
+                    console.log('Worker-' + this.id + 'error', reason);
+                    failed = true
+                });
+
+                if(failed) {
+                    console.log('Worker-' + this.id + ' retry.. wait..')
+                    await new Promise(x => setTimeout(x, 10000));
+                } else {
+                    break;
+                }
             }
         }
 
