@@ -81,7 +81,6 @@ Worker.prototype.call = async function (symbol, coin, base, since, limit) {
                 continue
                 k--
             }
-            await new Promise(x => setTimeout(x, 1000));
         }
 
         // 마지막 시간을 확인하고 다음 루프의 since 시간으로 셋팅한다.
