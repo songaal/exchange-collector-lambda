@@ -10,7 +10,7 @@ const coin = tmp[0]
 const base = tmp[1]
 worker.call(symbol, coin, base, since, limit)
     .then(function(data){
-         console.log(data);
+         console.log(new Date(), 'Process done..', symbol);
         }, function (err) {
-         console.log(attr.base, attr.coin, err, err.stack);
+         console.log(new Date(), attr.base, attr.coin, err, err.stack);
     })
