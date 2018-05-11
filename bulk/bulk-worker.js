@@ -60,12 +60,12 @@ Worker.prototype.call = async function (symbol, coin, base, since, limit) {
                 FunctionName: this.functionName,
                 Payload: JSON.stringify(attr)
             }).promise().then(function (data) {
-                // 이행(fulfillment)
                 if (data.StatusCode == 200) {
                     if (data.Payload == 'null') {
                         console.log(new Date(), 'Api error!', new Date(since).toLocaleString(), since, limit)
                     }
                     retSince = Number(data.Payload)
+                    console.log(new Date(), symbol, k, 'Next > ', retSince, data.Payload);
                 }
             }, function (err) {
                 console.log(attr.base, attr.coin, err, err.stack);
@@ -81,7 +81,9 @@ Worker.prototype.call = async function (symbol, coin, base, since, limit) {
                 continue
                 k--
             }
+            await new Promise(x => setTimeout(x, 1000));
         }
+
         // 마지막 시간을 확인하고 다음 루프의 since 시간으로 셋팅한다.
         lastSince = since
         since = retSince

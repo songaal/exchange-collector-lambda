@@ -21,4 +21,16 @@ function run() {
     })
 }
 
-run()
+function run_symbols(argv) {
+    console.log()
+    symbols = argv[2]
+    const symbolQueue = symbols.split(',')
+    console.log('totalSize=', symbolQueue.length, symbolQueue)
+    for (let i = 0; i < workerSize; i++) {
+        let worker = new Worker(i, 'exchange-bulk-collector', 'binance')
+        worker.callQueue(symbolQueue, since, limit)
+    }
+}
+
+// run()
+run_symbols(process.argv)
