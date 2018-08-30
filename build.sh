@@ -1,2 +1,7 @@
 #! /bin/bash
-zip -r9 ./dist.zip ./*.js ./node_modules
+
+VERSION=1.3.2
+
+zip -r9 ./exchange-collector-$VERSION.zip ./*.js ./node_modules
+
+echo "compress. exchange-collector-$VERSION.zip"
