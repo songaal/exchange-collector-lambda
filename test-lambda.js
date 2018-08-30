@@ -17,7 +17,7 @@ testCollector = function () {
     module.handler(event, null);
 }
 
-testCollector()
+testScheduler()
 
 // testBulkLambda = function () {
 //     let functionName = 'exchange-bulk-collector'

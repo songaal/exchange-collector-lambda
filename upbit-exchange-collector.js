@@ -3,21 +3,19 @@ let queue = require("./queue")
 let axios = require('axios')
 const QUEUE_URL = process.env.QUEUE_URL
 const CANDLE_JSON_URL = process.env.CANDLE_JSON_URL
-// const CANDLE_JSON_URL = 'https://api.upbit.com/v1/candles/minutes/1?count=2&market='
 
 exports.handler = (event, context, callback) => {
     let coin = event.coin
     let base = event.base
     let symbol = event.symbol
     let exchange_id = event.exchange
-    console.log(`${CANDLE_JSON_URL}${base}-${coin}`)
     axios.get(`${CANDLE_JSON_URL}${base}-${coin}`).then((response) => {
-      // 최신 2개
       candles = response.data
-      for (var i=0; i < candles.length; i++) {
+      // 3개 조회 후 앞 2개만 업데이트
+      for (var i = 0; i < candles.length - 1; i++) {
         candle = candles[i]
         data = []
-        data.push(candle['timestamp'])
+        data.push(new Date(Math.floor(candle['timestamp'] / 1000)).setSeconds(0))
         data.push(candle['opening_price'])
         data.push(candle['high_price'])
         data.push(candle['low_price'])
