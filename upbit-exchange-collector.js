@@ -15,12 +15,16 @@ exports.handler = (event, context, callback) => {
       for (var i = 0; i < candles.length - 1; i++) {
         candle = candles[i]
         data = []
-        data.push(new Date(Math.floor(candle['timestamp'] / 1000)).setSeconds(0))
+        let time = new Date(candle['timestamp'])
+        time.setMilliseconds(0)
+        time.setSeconds(0)
+        data.push(time.getTime())
         data.push(candle['opening_price'])
         data.push(candle['high_price'])
         data.push(candle['low_price'])
         data.push(candle['trade_price'])
         data.push(candle['candle_acc_trade_volume'])
+        // console.log(data)
         queue.put(data, exchange_id, coin, base, QUEUE_URL)
       }
     })
