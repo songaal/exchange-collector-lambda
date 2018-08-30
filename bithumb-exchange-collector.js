@@ -13,7 +13,7 @@ exports.handler = (event, context, callback) => {
 
     axios.get(CANDLE_JSON_URL).then((response) => {
       // 3개 조회 후 앞 2개만 업데이트
-      insertData = response.data.splice(response.data.length - 3, 3)
+      insertData = response.data.splice(response.data.length - 3, 2)
       for (var i=0; i < insertData.length - 1; i++) {
         lastData = insertData[i]
         // 빗썸은 t, o, c, h, l, v 순서.
