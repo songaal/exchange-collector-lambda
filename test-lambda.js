@@ -2,22 +2,22 @@ const AWS = require('aws-sdk')
 const lambda = new AWS.Lambda({region: 'ap-northeast-2'})
 
 testScheduler = function () {
-    var module = require('./bithumb-exchange-scheduler.js')
+    var module = require('./upbit-exchange-scheduler.js')
     module.handler({}, null);
 }
 
 testCollector = function () {
-    var module = require('./bithumb-exchange-collector.js')
+    var module = require('./upbit-exchange-collector.js')
     event = {
         base: 'KRW',
-        coin: 'CMT',
-        symbol: `CMT/KRW`,
-        exchange: 'bithumb'
+        coin: 'ONT',
+        symbol: `ONT/KRW`,
+        exchange: 'upbit'
     }
     module.handler(event, null);
 }
 
-// testCollector()
+testCollector()
 
 // testBulkLambda = function () {
 //     let functionName = 'exchange-bulk-collector'
