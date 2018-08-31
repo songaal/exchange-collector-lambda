@@ -12,7 +12,7 @@ exports.handler = (event, context, callback) => {
     axios.get(`${CANDLE_JSON_URL}${base}-${coin}`).then((response) => {
       candles = response.data
       // 3개 조회 후 앞 2개만 업데이트
-      for (var i = 0; i < candles.length - 1; i++) {
+      for (var i = 1; i < candles.length; i++) {
         candle = candles[i]
         data = []
         let time = new Date(candle['timestamp'])
