@@ -4,19 +4,12 @@ const config = { auth: { username: 'joonwoo', password: 'joonwoo1' } }
 const fs = require('fs')
 
 const exchangeId = 'binance'
-const interval = '1m'
-const startTime = new Date('2018-04-01 00:00').getTime()
-const endTime = new Date('2018-05-01 24:00').getTime()
-const coin = 'ETH'
-const base = 'BTC'
 
-const sleep = (delay) => {
-   var start = new Date().getTime()
-   while (new Date().getTime() < start + delay);
-}
-const delay = () => {
-  return new Promise(resolve => setTimeout(resolve, 300))
-}
+
+// const interval = '1m'
+// const startTime = new Date('2018-04-01 00:00').getTime()
+// const endTime = new Date('2018-05-01 24:00').getTime()
+
 
 const getMeasurementsList = () => {
   const url = endpoint + encodeURI(`q=SHOW MEASUREMENTS ON coin_v2`)
@@ -48,6 +41,8 @@ const getDaily = (measurement, startTime) => {
 
 const getBlankDate = (dataList) => {
   let blankDateList = []
+  let from = null
+  let to = null
   dataList.forEach((data, index) => {
     let time = data[0]
     let open = data[1]
@@ -57,13 +52,35 @@ const getBlankDate = (dataList) => {
     let volume = data[5]
     // console.log(time, open, high, low, close, volume)
     if (open == null || high == null || low == null || close == null || volume == null) {
-      let blankDate = new Date(time)
-      blankDateList.push({
-        timestamp: blankDate.getTime(),
-        date: blankDate
-      })
+      let dt = new Date(time)
+      if (from == null) {
+        from = dt
+      } else {
+        to = dt
+      }
+    } else {
+      if (from != null && to != null) {
+        blankDateList.push({
+          formDate: from,
+          toDate: to,
+          form: from.getTime(),
+          to: to.getTime()
+        })
+        from = null
+        to = null
+      }
     }
   })
+  if (from != null) {
+    // 혹시라도 현재까지 공백이 생기고 있다면..
+    let now = new Date()
+    blankDateList.push({
+      formDate: from,
+      toDate: now,
+      form: from.getTime(),
+      to: now.getTime()
+    })
+  }
   return blankDateList
 }
 
@@ -73,11 +90,10 @@ getMeasurementsList()
     let target = []
     measurements.forEach((measurementArr, index) => {
       let measurement = measurementArr[0]
-      console.log('measurement:', measurement)
 
       getStartTime(measurement).then((startTimeArr) => {
         let startTime = startTimeArr[0]
-        console.log('startTime:', startTime)
+        console.log('measurement: ', measurement, 'startTime:', startTime)
         return {
           measurement: measurement,
           startTime: new Date(startTime).getTime()
@@ -88,9 +104,10 @@ getMeasurementsList()
         let startTime = data['startTime']
         getDaily(measurement, startTime).then((dataList) => {
           let blankDateList = getBlankDate(dataList)
+
           if (blankDateList.length > 0) {
             fs.writeFile(`blank/${measurement}.txt`, JSON.stringify(blankDateList), 'utf8', (error) => {
-              console.log('write end. measurement: ', measurement, 'startTime:', startTime,' data size:', dataList.length, 'blank size:', blankDateList.length)
+              console.log('write end. measurement: ', measurement, 'data size:', dataList.length, 'blank size:', blankDateList.length)
             })
           }
 
