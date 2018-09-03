@@ -12,14 +12,16 @@ exports.handler = (event, context, callback) => {
     if (exchange.has.fetchOHLCV == true) {
         let promise = exchange.fetchOHLCV(symbol, '1m', undefined, limit)
         promise.then(function(dataList){
-            let data = dataList[dataList.length - 1]
+            for(var i = 1; i <= 2; i++) {
+                let data = dataList[dataList.length - i]
 
-            if (process.env.NODE_ENV == 'dev') {
-                console.log(exchange_id, coin, base, data);
-            }
-            if (process.env.DRY_RUN != 'true') {
-                if (data) {
-                    queue.put(data, exchange_id, coin, base, QUEUE_URL);
+                if (process.env.NODE_ENV == 'dev') {
+                    console.log(exchange_id, coin, base, i, data);
+                }
+                if (process.env.DRY_RUN != 'true') {
+                    if (data) {
+                        queue.put(data, exchange_id, coin, base, QUEUE_URL);
+                    }
                 }
             }
         }, function (err) {
