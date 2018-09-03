@@ -1,7 +1,7 @@
 const ccxt = require('ccxt')
 const queue = require("./queue")
-const QUEUE_URL = process.env.QUEUE_URL
-
+// const QUEUE_URL = process.env.QUEUE_URL
+const QUEUE_URL = 'https://sqs.ap-northeast-2.amazonaws.com/868448630378/joonwoo-test'
 exports.handler = (event, context, callback) => {
     const exchange_id = event.exchange;
     const coin = event.coin
@@ -21,9 +21,13 @@ exports.handler = (event, context, callback) => {
             }
             lastData = dataList[size - 1]
             // 마지막 시간을 리턴한다.
-            callback(null, lastData[0]);
+            if (callback !== undefined) {
+              callback(null, lastData[0]);
+            }
         }, function (err) {
+          if (callback !== undefined) {
             callback(err, null);
+          }
         })
 
     } else {
