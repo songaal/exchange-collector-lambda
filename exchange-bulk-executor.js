@@ -12,7 +12,7 @@ const collector = require('./exchange-bulk-collector')
 
 const exchangeId = 'binance' //거래소
 const addMinute = 5      // 공백 앞뒤로 추가 캔들(분단위)
-const functionName = null   // 람다 사용시 이름 입력
+const functionName = 'exchange-bulk-collector'   // 람다 사용시 이름 입력
 
 exports.handler = (event, context, callback) => {
   getMeasurementsList()
@@ -69,8 +69,8 @@ const getMeasurementsList = () => {
     let measurements = result['series'][0]['values'].filter((o, i) => {
       return o[0].startsWith(exchangeId)
     })
-    return measurements
     // return [['binance_xrp_btc']]
+    return measurements
   })
 }
 
@@ -168,7 +168,7 @@ const runCollector = (measurement, blankDate) => {
       console.log('call local mode, attr:', attr)
       collector.handler(attr)
     }
-    sleep(500)
+    // sleep(500)
   })
   console.log('총 :', t)
 }
