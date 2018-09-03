@@ -15,7 +15,6 @@ exports.handler = (event, context, callback) => {
   axios.get(CANDLE_JSON_URL).then((response) => {
     // 빗썸은 t, o, c, h, l, v 순서.
     for(var i = 1; i <= 2; i++) {
-      // 이전 10개 for(var i = 1; i <= 10; i++) {
       let index = response.data.length - i
       let data = []
       data.push(response.data[index][0])

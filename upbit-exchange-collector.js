@@ -16,7 +16,6 @@ exports.handler = (event, context, callback) => {
   let url = `${CANDLE_JSON_URL}count=${CANDLE_COUNT}&market=${base}-${coin}`
   axios.get(url).then((response) => {
     for(let i = 0; i < response.data.length; i++) {
-      // 이전 10개  CANDLE_COUNT = 10, for(var i = 0; i < 10; i++) {
       let time = new Date(response.data[i]['timestamp'])
       time.setMilliseconds(0)
       time.setSeconds(0)
