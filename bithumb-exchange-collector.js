@@ -1,30 +1,36 @@
-let ccxt = require('ccxt')
-let queue = require("./queue")
-let axios = require('axios')
+const queue = require("./queue")
+const axios = require('axios')
 const QUEUE_URL = process.env.QUEUE_URL
 const CANDLE_JSON_URL = process.env.CANDLE_JSON_URL
-// 'https://www.bithumb.com/resources/chart/BTC_xcoinTrade_01M.json'
-// resolutions: 1, 3, 5, 10, 30 ,60 ,360, 720, D, W, M
-exports.handler = (event, context, callback) => {
-    let coin = event.coin
-    let base = event.base
-    let symbol = event.symbol
-    let exchange_id = event.exchange
+// const CANDLE_JSON_URL = 'https://www.bithumb.com/resources/chart/BTC_xcoinTrade_01M.json'
+// process.env.NODE_ENV = 'dev'
+// process.env.DRY_RUN = 'true'
 
-    axios.get(CANDLE_JSON_URL).then((response) => {
-      // 3개 조회 후 앞 2개만 업데이트
-      insertData = response.data.splice(response.data.length - 3, 2)
-      for (var i=0; i < insertData.length - 1; i++) {
-        lastData = insertData[i]
-        // 빗썸은 t, o, c, h, l, v 순서.
-        data = []
-        data.push(lastData[0])
-        data.push(lastData[1])
-        data.push(lastData[3])
-        data.push(lastData[4])
-        data.push(lastData[2])
-        data.push(lastData[5])
-        queue.put(data, exchange_id, coin, base, QUEUE_URL)
+exports.handler = (event, context, callback) => {
+  let coin = event.coin
+  let base = event.base
+  let symbol = event.symbol
+  let exchange_id = event.exchange
+
+  axios.get(CANDLE_JSON_URL).then((response) => {
+    // 빗썸은 t, o, c, h, l, v 순서.
+    for(var i = 1; i <= 2; i++) {
+      let index = response.data.length - i
+      let data = []
+      data.push(response.data[index][0])
+      data.push(response.data[index][1])
+      data.push(response.data[index][3])
+      data.push(response.data[index][4])
+      data.push(response.data[index][2])
+      data.push(response.data[index][5])
+      if (process.env.NODE_ENV == 'dev') {
+        console.log(exchange_id, coin, base, i, data);
       }
-    })
+      if (process.env.DRY_RUN != 'true') {
+        if (data) {
+          queue.put(data, exchange_id, coin, base, QUEUE_URL);
+        }
+      }
+    }
+  })
 }

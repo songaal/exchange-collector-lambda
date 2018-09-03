@@ -12,7 +12,7 @@ exports.handler = (event, context, callback) => {
     if (exchange.has.fetchOHLCV == true) {
         let promise = exchange.fetchOHLCV(symbol, '1m', undefined, limit)
         promise.then(function(dataList){
-            for(var i = 1; i <= 2; i++) {
+            for(let i = 1; i <= 2; i++) {
                 let data = dataList[dataList.length - i]
 
                 if (process.env.NODE_ENV == 'dev') {

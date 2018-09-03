@@ -15,18 +15,21 @@ const base = 'BTC'
 // ==========================================================
 const maxCount = ((endTime - startTime) / 60) / 1000
 
-const getQuery = (startTime, endTime) => {
+const getCountQuery = (startTime, endTime) => {
   return encodeURI(`SELECT count(*) FROM coin_v2.autogen.${exchange_id}_${coin}_${base} WHERE time >= ${startTime} AND time <= ${endTime}`)
 }
+const getDataQuery = (startTime, endTime) => {
+  return encodeURI(`SELECT time, open, high, low, close, volume FROM coin_v2.autogen.${exchange_id}_${coin}_${base} WHERE time >= ${startTime} AND time <= ${endTime}`)
+}
 
-const url = `${endpoint}?q=${getQuery(startTime, endTime)}`
+const url = `${endpoint}?q=${getCountQuery(startTime, endTime)}`
 axios.get(url, apiConfig).then((response) => {
   // 해당 기간에 데이터 조회하여 완전한 데이터 갯수가 있는지 확인한다.
-  let mesurement = response.data.results[0]
   let result = {
     isFull: false,
     size: 0
   }
+  let mesurement = response.data.results[0]
   if (mesurement.series !== undefined) {
     result['size'] = mesurement.series[0].values[0][1]
     result['isFull'] = maxCount === result['size']
@@ -35,28 +38,41 @@ axios.get(url, apiConfig).then((response) => {
   console.log('보유 데이터 수: ', result['size'])
   return result
 }).then((result) => {
-  let blankDateList = []
   if (result['isFull']) {
-    return blankDateList
-  } else {
-    let cur = new Date(startTime)
-    while (cur.getTime() <= endTime) {
-      console.log(cur)
-      cur.setMinutes(cur.getMinutes() + 1)
-    }
+    console.log('종료.')
+    return
   }
-  return blankDateList
+  let blankDateList = []
+  let cur = new Date(startTime)
+  while (cur.getTime() <= endTime) {
 
-}).then((blankTimeList) => {
-  console.log(blankTimeList)
+
+
+    cur.setMinutes(cur.getMinutes() + 1000)
+    console.log('날짜:', cur.getTime(), cur.getFullYear(), cur.getMonth() + 1, cur.getDate(), cur.getHours(), cur.getMinutes(), cur.getSeconds())
+  }
 })
-// cur.setDate(cur.getDate() + 1)
-//
 
-// let cur = new Date(startTime)
-// const limit = ((endTime - startTime) / 60) / 1000
-// const exchange = new ccxt[exchange_id]()
-// let promise = exchange.fetchOHLCV(`${coin}/${base}`, interval, cur.getTime(), limit)
-// promise.then((data) => {
-//   console.log(data.length)
-// })
+//
+// const getCount = async (startTime, endTime) => {
+//   axios.get(url, apiConfig).then((response) => {
+//     // 해당 기간에 데이터 조회하여 완전한 데이터 갯수가 있는지 확인한다.
+//     let result = {
+//       isFull: false,
+//       size: 0
+//     }
+//     let mesurement = response.data.results[0]
+//     if (mesurement.series !== undefined) {
+//       result['size'] = mesurement.series[0].values[0][1]
+//       result['isFull'] = maxCount === result['size']
+//     }
+//     console.log('목표 데이터 수: ', maxCount)
+//     console.log('보유 데이터 수: ', result['size'])
+//     resolve(result)
+//   })
+// }
+// let a= getCount(startTime, endTime)
+// console.log('a', a)
+// const getData = async (startTime, endTime) => {
+//
+// }
