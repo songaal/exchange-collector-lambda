@@ -9,17 +9,45 @@ const collector = require('./exchange-bulk-collector')
 // const exchangeId = process.env.EXCHANGE
 // const addMinute = process.env.ADD_MINUTE
 // const functionName = process.env.FUNCTION_NAME
+//'exchange-bulk-collector'
 
 const exchangeId = 'binance' //거래소
 const addMinute = 5      // 공백 앞뒤로 추가 캔들(분단위)
-const functionName = 'exchange-bulk-collector'   // 람다 사용시 이름 입력
+const functionName = 'exchange-bulk-collector'
 const isFileWrite = true
-
+const fileName = `blank/symbol.txt`
+const isDryRun = true
+const symbolsFile = 'binance-symbols.json'
+let totalBlankDateList = []
 exports.handler = (event, context, callback) => {
+
+  if (isFileWrite !== undefined && isFileWrite == true) {
+    fs.exists('test1.txt', (exists) => {
+      if (exists) {
+        fs.unlink(fileName)
+        console.log('remove file:' + fileName)
+      }
+    })
+  }
+
   getMeasurementsList()
     .then((measurements) => {
       let target = []
+
+      let symbols = JSON.parse(fs.readFileSync(symbolsFile, 'utf8'))
+      let tmpMeasurements = []
       measurements.forEach((measurementArr, index) => {
+        let measurement = measurementArr[0]
+        let target = measurement.split('_')[1].toUpperCase() + '/' + measurement.split('_')[2].toUpperCase()
+
+        Object.keys(symbols).forEach((symbol, index) => {
+          if (symbols[symbol]['active'] == true && target == symbol) {
+            tmpMeasurements.push(measurementArr)
+          }
+        })
+      })
+
+      tmpMeasurements.forEach((measurementArr, index) => {
         let measurement = measurementArr[0]
 
         getStartTime(measurement).then((startTimeArr) => {
@@ -38,7 +66,12 @@ exports.handler = (event, context, callback) => {
 
             if (blankDateList.length > 0) {
               if (isFileWrite !== undefined && isFileWrite == true) {
-                fs.writeFile(`blank/${measurement}.txt`, JSON.stringify(blankDateList), 'utf8', (error) => {
+                let writeData = {
+                  measurement: measurement,
+                  dateList: blankDateList
+                }
+                totalBlankDateList.push(writeData)
+                fs.writeFile(fileName, JSON.stringify(totalBlankDateList), 'utf8', (error) => {
                   console.log('write end. measurement: ', measurement, 'data size:', dataList.length, 'blank size:', blankDateList.length)
                 })
               }
@@ -158,21 +191,23 @@ const runCollector = (measurement, blankDate) => {
       limit: date['limit'],
       totalCount: totalCount
     }
-    if (functionName !== undefined && functionName !== null) {
-      console.log('call lambda function ', functionName, ', attr:', attr)
-      lambda.invoke({
-        FunctionName: functionName,
-        Payload: JSON.stringify(attr)
-      }, function (err, data) {
-        if (err) console.log(attr.base, attr.coin, err, err.stack);
-      })
-    } else {
-      console.log('call local mode, attr:', attr)
-      collector.handler(attr)
+    if (isDryRun != true) {
+      if (functionName !== undefined && functionName !== null) {
+        console.log('call lambda function ', functionName, ', attr:', attr)
+        lambda.invoke({
+          FunctionName: functionName,
+          Payload: JSON.stringify(attr)
+        }, function (err, data) {
+          if (err) console.log(attr.base, attr.coin, err, err.stack);
+        })
+      } else {
+        console.log('call local mode, attr:', attr)
+        collector.handler(attr)
+      }
     }
     // sleep(500)
   })
-  console.log('총 :', t)
+  console.log('총 입력해야될 데이터 수:', t)
 }
 
 const getBlankDate = (dataList) => {

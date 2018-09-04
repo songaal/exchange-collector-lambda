@@ -9,6 +9,7 @@ exports.handler = (event, context, callback) => {
     let symbol = event.symbol
     let exchange_id = event.exchange;
     let exchange = new ccxt[exchange_id]()
+    exchange.substituteCommonCurrencyCodes = false
     if (exchange.has.fetchOHLCV == true) {
         let promise = exchange.fetchOHLCV(symbol, '1m', undefined, limit)
         promise.then(function(dataList){

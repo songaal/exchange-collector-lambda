@@ -13,6 +13,7 @@ let objectKey = `${s3_prefix}/${exchange_id}${s3_suffix}`
 
 exports.handler = (event, context, callback) => {
     let exchange = new (ccxt)[exchange_id]()
+    exchange.substituteCommonCurrencyCodes = false
     let promise = exchange.load_markets()
     promise.then(function (markets) {
         //1. 최신 market symbol 들을 s3 정적호스팅에 업데이트 해준다.
@@ -30,8 +31,8 @@ exports.handler = (event, context, callback) => {
             for (let symbol in markets) {
                 market = markets[symbol]
                 let attr = {
-                    base: market.info.quoteAsset,
-                    coin: market.info.baseAsset,
+                    base: market.quoteId,
+                    coin: market.baseId,
                     symbol: market.symbol,
                     exchange: exchange_id
                 };
@@ -52,4 +53,3 @@ exports.handler = (event, context, callback) => {
         console.log(err);
     });
 }
-
