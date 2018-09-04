@@ -13,6 +13,7 @@ const collector = require('./exchange-bulk-collector')
 const exchangeId = 'binance' //거래소
 const addMinute = 5      // 공백 앞뒤로 추가 캔들(분단위)
 const functionName = 'exchange-bulk-collector'   // 람다 사용시 이름 입력
+const isFileWrite = true
 
 exports.handler = (event, context, callback) => {
   getMeasurementsList()
@@ -36,10 +37,11 @@ exports.handler = (event, context, callback) => {
             let blankDateList = getBlankDate(dataList)
 
             if (blankDateList.length > 0) {
-
-              fs.writeFile(`blank/${measurement}.txt`, JSON.stringify(blankDateList), 'utf8', (error) => {
-                console.log('write end. measurement: ', measurement, 'data size:', dataList.length, 'blank size:', blankDateList.length)
-              })
+              if (isFileWrite !== undefined && isFileWrite == true) {
+                fs.writeFile(`blank/${measurement}.txt`, JSON.stringify(blankDateList), 'utf8', (error) => {
+                  console.log('write end. measurement: ', measurement, 'data size:', dataList.length, 'blank size:', blankDateList.length)
+                })
+              }
 
               blankDateList.forEach((blankDate) => {
                 runCollector(measurement, blankDate)
