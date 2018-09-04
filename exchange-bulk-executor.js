@@ -15,14 +15,14 @@ const exchangeId = 'binance' //거래소
 const addMinute = 5      // 공백 앞뒤로 추가 캔들(분단위)
 const functionName = 'exchange-bulk-collector'
 const isFileWrite = true
-const fileName = `blank/symbol.txt`
-const isDryRun = true
+const fileName = `blank/symbols.txt`
+const isDryRun = false
 const symbolsFile = 'binance-symbols.json'
 let totalBlankDateList = []
 exports.handler = (event, context, callback) => {
 
   if (isFileWrite !== undefined && isFileWrite == true) {
-    fs.exists('test1.txt', (exists) => {
+    fs.exists(fileName, (exists) => {
       if (exists) {
         fs.unlink(fileName)
         console.log('remove file:' + fileName)
@@ -37,6 +37,7 @@ exports.handler = (event, context, callback) => {
       let symbols = JSON.parse(fs.readFileSync(symbolsFile, 'utf8'))
       let tmpMeasurements = []
       measurements.forEach((measurementArr, index) => {
+
         let measurement = measurementArr[0]
         let target = measurement.split('_')[1].toUpperCase() + '/' + measurement.split('_')[2].toUpperCase()
 
@@ -221,7 +222,8 @@ const getBlankDate = (dataList) => {
     let low = data[3]
     let close = data[4]
     let volume = data[5]
-    if (open == null || high == null || low == null || close == null || volume == null) {
+    if (open == null || high == null || low == null || close == null || volume == null ||
+      open == 0 || high == 0 || low == 0 || close == 0 || volume == 0) {
       let dt = new Date(time)
       if (from == null) {
         from = dt

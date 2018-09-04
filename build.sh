@@ -10,7 +10,7 @@
 # upbit-exchange-collector, upbit-exchange-scheduler
 #  1. 업비트 전용
 
-VERSION=1.3.6
+VERSION=1.3.7
 zip -r9 ./exchange-collector-$VERSION.zip ./*.js ./node_modules
 
 echo "compress. exchange-collector-$VERSION.zip"
