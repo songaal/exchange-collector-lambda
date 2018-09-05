@@ -14,15 +14,29 @@ let marketUrl = process.env.MARKET_URL
 exports.handler = (event, context, callback) => {
   axios.get(marketUrl).then((response) => {
     let markets = response.data
+    let formatMarkets = {}
+    markets.forEach((market, index) => {
+      let coin = market.market.split('-')[1]
+      let base = market.market.split('-')[0]
+      let symbol = `${coin}/${base}`
+      formatMarkets[symbol] = {
+        id: coin,
+        symbol: symbol,
+        base: coin,
+        quote: base
+      }
+    })
     //1. 최신 market symbol 들을 s3 정적호스팅에 업데이트 해준다.
     S3.putObject({
       Bucket: bucket,
       Key: objectKey,
-      Body: JSON.stringify(markets),
+      Body: JSON.stringify(formatMarkets),
       ContentType: "application/json"
     }, function (resp) {
+      console.log(resp)
       console.log(`Successfully uploaded markets. => bucket:${bucket}, objectKey: ${objectKey}`);
     })
+
     //2.심볼별 collector 호출
     for (var i = 0; i < markets.length; i++) {
       let market = markets[i]
