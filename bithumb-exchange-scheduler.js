@@ -36,14 +36,14 @@ exports.handler = (event, context, callback) => {
         exchange: exchange_id
       }
       console.log('call lambda function ', functionName, ', attr:', attr)
-      // if (process.env.DRY_RUN != 'true') {
+      if (process.env.DRY_RUN != 'true') {
         lambda.invoke({
           FunctionName: functionName,
           Payload: JSON.stringify(attr)
         }, function (err, data) {
           if (err) console.log(attr.base, attr.coin, err, err.stack);
         })
-      // }
+      }
     }
   })
 }
