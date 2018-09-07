@@ -10,7 +10,10 @@
 # upbit-exchange-collector, upbit-exchange-scheduler
 #  1. 업비트 전용
 
-VERSION=1.3.9
+# huobi-exchange-collector, exchange-scheduler
+#  1. 후오비
+
+VERSION=1.3.10
 zip -r9 ./exchange-collector-$VERSION.zip ./*.js ./node_modules
 
 echo "compress. exchange-collector-$VERSION.zip"

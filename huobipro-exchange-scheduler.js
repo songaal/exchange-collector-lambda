@@ -25,30 +25,24 @@ exports.handler = (event, context, callback) => {
         }, function (resp) {
             console.log(`Successfully uploaded markets. => bucket:${bucket}, objectKey: ${objectKey}`);
         });
-
         //2. 캔들정보 함수가 있다면
-        console.log('exchange', exchange.has.fetchOHLCV)
-        if (exchange.has.fetchOHLCV == true) {
-            for (let symbol in markets) {
-                market = markets[symbol]
-                let attr = {
-                    base: market.quote,
-                    coin: market.base,
-                    symbol: market.symbol,
-                    exchange: exchange_id
-                };
-                console.log('call lambda function ', functionName, ', attr:', attr)
-                if (process.env.DRY_RUN != 'true') {
-                    lambda.invoke({
-                        FunctionName: functionName,
-                        Payload: JSON.stringify(attr)
-                    }, function (err, data) {
-                        if (err) console.log(attr.base, attr.coin, err, err.stack);
-                    });
-                }
+        for (let symbol in markets) {
+            market = markets[symbol]
+            let attr = {
+                base: market.quote,
+                coin: market.base,
+                symbol: market.symbol,
+                exchange: exchange_id
+            };
+            console.log('call lambda function ', functionName, ', attr:', attr)
+            if (process.env.DRY_RUN != 'true') {
+                lambda.invoke({
+                    FunctionName: functionName,
+                    Payload: JSON.stringify(attr)
+                }, function (err, data) {
+                    if (err) console.log(attr.base, attr.coin, err, err.stack);
+                });
             }
-        } else {
-            console.log(exchange_id, 'exchange not support candle api.')
         }
     }, function (err) {
         console.log(err);
