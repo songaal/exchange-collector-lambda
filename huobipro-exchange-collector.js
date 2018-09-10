@@ -17,20 +17,16 @@ exports.handler = (event, context, callback) => {
         return true
       }
       let data = []
-      data.push(candle['id'])
+      data.push(Number(candle['id']) * 1000)
       data.push(candle['open'])
       data.push(candle['high'])
       data.push(candle['low'])
       data.push(candle['close'])
       data.push(candle['vol'])
       if (process.env.NODE_ENV == 'dev') {
-        console.log(exchange_id, coin, base, data);
+        console.log(exchange_id, coin, base, data)
       }
-      if (process.env.DRY_RUN != 'true') {
-        if (data) {
-          queue.put(data, exchange_id, coin, base, QUEUE_URL)
-        }
-      }
+      queue.put(data, exchange_id, coin, base, QUEUE_URL)
     })
   })
 }
