@@ -56,8 +56,7 @@ exports.handler = (event, context, callback) => {
         if(!isDev) {
           // lambda function
         } else {
-          // local function
-          collector.handler(attr)
+          console.log('[DEV MODE] ', attr)
         }
       }
       curTime.setMinutes(curTime.getMinutes() + limit)
