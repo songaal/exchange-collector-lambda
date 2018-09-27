@@ -14,6 +14,9 @@ const dryRun = process.env.DRY_RUN
 const startTime = new Date(2018, 5, 1, 0, 0, 0)
 const limit = 720 // max: 1000
 
+const max_lambda = 200
+const lambdaDelay = 30 * 1000
+
 const getMeasurementsList = (exchangeId) => {
   const url = endpoint + encodeURI(`q=SHOW MEASUREMENTS ON coin_v2`)
   return axios.get(url, config).then((response) => {
@@ -37,10 +40,17 @@ exports.handler = (event, context, callback) => {
     let endTime = new Date()
     let isEnd = false
     let loop1 = 0
+    let callCount = 0
     while ( !isEnd ) {
       loop1++
       let loop2 = 0
       for (let i=0; i < measurements.length; i++) {
+        if (callCount >= max_lambda) {
+          console.log('lambda deplay..', lambdaDelay + 'ms')
+          sleep(lambdaDelay)
+          callCount = 0
+        }
+        console.log(new Date(), ' callCount:', callCount + 1)
         loop2++
         m = measurements[i][0]
         exchange = m.split('_')[0]
@@ -56,15 +66,18 @@ exports.handler = (event, context, callback) => {
         }
         if(!dryRun) {
           // lambda function
-          lambda.invoke({
-            FunctionName: functionName,
-            Payload: JSON.stringify(attr)
-          }, function (err, data) {
-            if (err) console.log(attr.base, attr.coin, err, err.stack);
-          })
+
+          // lambda.invoke({
+          //   FunctionName: functionName,
+          //   Payload: JSON.stringify(attr)
+          // }, function (err, data) {
+          //   if (err) console.log(attr.base, attr.coin, err, err.stack);
+          // })
         } else {
           console.log('[DEV MODE] ', attr)
         }
+        callCount++
+        sleep(80)
       }
       curTime.setMinutes(curTime.getMinutes() + limit)
       console.log(`loop#1: ${loop1}, loop#2: ${loop2} curTime: ${curTime.getTime()}, limit: ${limit}`)
@@ -73,10 +86,8 @@ exports.handler = (event, context, callback) => {
       } else if(endTime.getTime() == curTime.getTime()) {
         isEnd = true
       }
-      sleep(100)
+      // sleep(100)
     }
   })
 
 }
-
-exports.handler()

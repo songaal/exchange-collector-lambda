@@ -13,6 +13,11 @@
 # huobi-exchange-collector, exchange-scheduler
 #  1. 후오비
 
+
+
+# binance-bulk-executor-force, binance-bulk-collector-force:
+#  바이낸스 전용 강제 데이터 업데이트. 로컬에서 람다 호출.
+
 VERSION=1.3.10
 zip -r9 ./exchange-collector-$VERSION.zip ./*.js ./node_modules
 
