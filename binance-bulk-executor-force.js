@@ -7,9 +7,10 @@ const axios = require('axios')
 const endpoint = 'http://13.125.196.188:8086/query?'
 const config = { auth: { username: 'joonwoo', password: 'joonwoo1' } }
 const collector = require('./binance-bulk-collector-force')
+const functionName = ''
+const dryRun = process.env.DRY_RUN
 
 // 설정
-const isDev = true
 const startTime = new Date(2018, 5, 1, 0, 0, 0)
 const limit = 720 // max: 1000
 
@@ -53,8 +54,14 @@ exports.handler = (event, context, callback) => {
           since: curTime.getTime(),
           limit: limit
         }
-        if(!isDev) {
+        if(!dryRun) {
           // lambda function
+          lambda.invoke({
+            FunctionName: functionName,
+            Payload: JSON.stringify(attr)
+          }, function (err, data) {
+            if (err) console.log(attr.base, attr.coin, err, err.stack);
+          })
         } else {
           console.log('[DEV MODE] ', attr)
         }

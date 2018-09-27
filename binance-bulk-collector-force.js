@@ -5,8 +5,9 @@
 const AWS = require('aws-sdk')
 const lambda = new AWS.Lambda({region: 'ap-northeast-2'})
 const axios = require('axios')
-// const QUEUE_URL = process.env.QUEUE_URL
-const QUEUE_URL = 'https://sqs.ap-northeast-2.amazonaws.com/868448630378/coin-price'
+const queue = require("./queue")
+const QUEUE_URL = process.env.QUEUE_URL
+// const QUEUE_URL = 'https://sqs.ap-northeast-2.amazonaws.com/868448630378/coin-price'
 
 exports.handler = (event, context, callback) => {
     const exchange = event.exchange
@@ -29,6 +30,7 @@ exports.handler = (event, context, callback) => {
         tmpData.push(o[4])
         tmpData.push(o[5])
         dataList.push(tmpData)
+        console.log('update data: ', tmpData)
       })
       if (process.env.DRY_RUN != 'true') {
           queue.bulk_put(dataList, exchange, coin, base, QUEUE_URL)
