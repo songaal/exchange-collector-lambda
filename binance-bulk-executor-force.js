@@ -7,7 +7,8 @@ const axios = require('axios')
 const endpoint = 'http://13.125.196.188:8086/query?'
 const config = { auth: { username: 'joonwoo', password: 'joonwoo1' } }
 const collector = require('./binance-bulk-collector-force')
-const functionName = process.env.FUNCTION_NAME
+// const functionName = process.env.FUNCTION_NAME
+const functionName = 'binance-bulk-collector-force'
 const dryRun = process.env.DRY_RUN
 
 // 설정
