@@ -66,13 +66,12 @@ exports.handler = (event, context, callback) => {
         }
         if(!dryRun) {
           // lambda function
-
-          // lambda.invoke({
-          //   FunctionName: functionName,
-          //   Payload: JSON.stringify(attr)
-          // }, function (err, data) {
-          //   if (err) console.log(attr.base, attr.coin, err, err.stack);
-          // })
+          lambda.invoke({
+            FunctionName: functionName,
+            Payload: JSON.stringify(attr)
+          }, function (err, data) {
+            if (err) console.log(attr.base, attr.coin, err, err.stack);
+          })
         } else {
           console.log('[DEV MODE] ', attr)
         }
