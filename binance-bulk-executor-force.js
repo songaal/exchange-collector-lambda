@@ -15,8 +15,8 @@ const dryRun = process.env.DRY_RUN
 const startTime = new Date(2018, 5, 1, 0, 0, 0)
 const limit = 720 // max: 1000
 
-const max_lambda = 200
-const lambdaDelay = 30 * 1000
+const max_lambda = 30
+const lambdaDelay = 10 * 1000
 
 const getMeasurementsList = (exchangeId) => {
   const url = endpoint + encodeURI(`q=SHOW MEASUREMENTS ON coin_v2`)
